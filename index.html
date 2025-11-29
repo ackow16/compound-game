@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>COMPOUND - Daily Word Chain Puzzle</title>
+    <meta name="description" content="Link words to complete the chain. A daily puzzle game.">
+    <meta property="og:title" content="COMPOUND">
+    <meta property="og:description" content="Daily word chain puzzle - arrange words to form compound connections">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='10' width='80' height='80' rx='12' fill='%232D5A3D'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='white'>C</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="game-header">
+            <div class="header-left">
+                <button id="help-btn" class="icon-btn" aria-label="How to play">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M7.5 7.5C7.5 6.12 8.62 5 10 5C11.38 5 12.5 6.12 12.5 7.5C12.5 8.88 11.38 10 10 10V11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="10" cy="14" r="1" fill="currentColor"/>
+                    </svg>
+                </button>
+                <span class="timer-display" id="timer-display">0:00</span>
+            </div>
+            <div class="header-center">
+                <h1 class="game-title">COMPOUND</h1>
+                <p class="game-tagline">Complete the chain</p>
+            </div>
+            <div class="header-right">
+                <div class="lives-container" id="lives-container"></div>
+            </div>
+        </header>
+
+        <main class="game-board">
+            <div class="ring-container" id="ring-container">
+                <div class="slots-layer" id="slots-layer"></div>
+                <div class="pool-container" id="pool-container">
+                    <div class="pool-inner">
+                        <div class="pool-message">Arrange the words</div>
+                        <div class="word-pool" id="word-pool"></div>
+                        <button id="submit-btn" class="submit-btn">Check Chain</button>
+                    </div>
+                    <div id="feedback-message" class="feedback-message"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <p class="date-display" id="date-display"></p>
+            <p class="puzzle-number" id="puzzle-number"></p>
+        </footer>
+    </div>
+
+    <!-- Start Screen -->
+    <div class="start-overlay" id="start-overlay">
+        <div class="start-content">
+            <h1 class="start-title">COMPOUND</h1>
+            <p class="start-subtitle">Daily Word Chain Puzzle</p>
+            <div class="start-description">
+                <p>Arrange 16 words around the board to form a continuous chain of compound words.</p>
+            </div>
+            <button class="start-btn" id="start-btn">Play</button>
+            <p class="start-date" id="start-date"></p>
+        </div>
+    </div>
+
+    <!-- Win/Loss Modal -->
+    <div class="modal-overlay hidden" id="modal-overlay">
+        <div class="modal" id="win-modal">
+            <div class="modal-icon" id="modal-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2"/>
+                    <path d="M16 24L22 30L32 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h2 class="modal-title">Chain Complete</h2>
+            <p class="modal-text">You solved today's COMPOUND puzzle.</p>
+            <div class="stats-summary" id="stats-summary"></div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="share-btn">Share Result</button>
+                <button class="btn btn-secondary" id="close-modal-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay hidden" id="help-overlay">
+        <div class="modal modal-help" id="help-modal">
+            <button class="modal-close" id="close-help-btn" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <h2 class="modal-title">How to Play</h2>
+            <div class="help-content">
+                <div class="help-section">
+                    <h3>The Goal</h3>
+                    <p>Arrange all 16 words around the square to form a continuous chain of compound words.</p>
+                </div>
+                <div class="help-section">
+                    <h3>How It Works</h3>
+                    <p>Each adjacent pair should form a compound. <strong>SUN + LIGHT</strong> = sunlight.</p>
+                </div>
+                <div class="help-section">
+                    <h3>Controls</h3>
+                    <p>Drag words from center to slots. Drag between slots to swap. Drop in center to return.</p>
+                </div>
+                <div class="help-section">
+                    <h3>Guesses</h3>
+                    <p>3 attempts. Correct sides lock in green.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js?v=4"></script>
+</body>
+</html>
