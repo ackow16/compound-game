@@ -1,7 +1,11 @@
-import { Game } from './game.js?v=4';
-import { UI } from './ui.js?v=4';
+import { dailyPuzzle } from './data.js?v=5';
+import { Game } from './game.js?v=5';
+import { UI } from './ui.js?v=5';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load puzzle data from server first
+    await dailyPuzzle.load();
+
     const game = new Game();
     const ui = new UI(game);
 

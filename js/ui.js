@@ -1,4 +1,4 @@
-import { dailyPuzzle } from './data.js?v=4';
+import { dailyPuzzle } from './data.js?v=5';
 
 export class UI {
     constructor(game) {
@@ -165,7 +165,7 @@ export class UI {
 
     showSolution() {
         // Fill slots with the correct solution
-        const solution = dailyPuzzle.solution;
+        const solution = dailyPuzzle.getSolutionForDisplay();
         const slotEls = this.slotsLayer.querySelectorAll('.slot');
         slotEls.forEach((el, index) => {
             el.textContent = solution[index];
@@ -535,7 +535,7 @@ export class UI {
             modalTitle.textContent = 'Game Over';
 
             // Show the solution as text
-            const solution = dailyPuzzle.solution;
+            const solution = dailyPuzzle.getSolutionForDisplay();
             modalText.innerHTML = `
                 <div style="margin-bottom: 16px;">The correct chain was:</div>
                 <div style="font-size: 0.75rem; line-height: 1.6; color: var(--text-secondary); word-break: break-word;">
