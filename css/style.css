@@ -760,17 +760,78 @@ body {
 /* Responsive - Mobile */
 @media (max-width: 600px) {
     :root {
-        /* Add padding so slots don't touch edges */
-        --ring-width: calc(100vw - 24px);
-        --ring-height: calc(var(--ring-width) * 0.75);
-        --slot-width: clamp(62px, 18vw, 85px);
-        --slot-height: clamp(46px, 12vw, 62px);
-        --pool-width: 48vw;
-        --pool-height: 40vw;
+        /* Square board - no pool inside, so can be more square */
+        --ring-width: calc(100vw - 32px);
+        --ring-height: calc(var(--ring-width) * 0.85);
+        --slot-width: clamp(68px, 20vw, 90px);
+        --slot-height: clamp(48px, 13vw, 65px);
     }
 
     .app-container {
-        padding: 0 12px;
+        padding: 0 16px;
+    }
+
+    /* Game board becomes vertical stack */
+    .game-board {
+        flex-direction: column;
+        gap: 16px;
+        padding: 8px 0;
+    }
+
+    /* Ring container - just the slots, no pool inside */
+    .ring-container {
+        width: var(--ring-width);
+        height: var(--ring-height);
+    }
+
+    /* Move pool BELOW the board on mobile */
+    .pool-container {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        height: auto;
+        margin-top: 12px;
+    }
+
+    .pool-inner {
+        padding: 12px;
+        background: var(--card-bg);
+        border-radius: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .word-pool {
+        gap: 8px;
+        padding: 0;
+        width: 100%;
+    }
+
+    .pool-word {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+        min-height: 48px;
+        border-radius: 10px;
+    }
+
+    .pool-message {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .submit-btn {
+        padding: 12px 32px;
+        font-size: 0.85rem;
+        margin-top: 12px;
+    }
+
+    .feedback-message {
+        position: relative;
+        top: auto;
+        transform: none;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
     }
 
     /* Restructure header for mobile - 2 rows */
@@ -783,26 +844,22 @@ body {
         row-gap: 14px;
     }
 
-    /* Info button top left */
     .header-left {
         grid-column: 1;
         grid-row: 1;
         justify-self: start;
     }
 
-    /* Hide timer on mobile - save space */
     .header-left .timer-display {
         display: none;
     }
 
-    /* Title center top */
     .header-center {
         grid-column: 2;
         grid-row: 1;
         text-align: center;
     }
 
-    /* Lives below title, centered, full width row */
     .header-right {
         grid-column: 1 / -1;
         grid-row: 2;
@@ -810,56 +867,27 @@ body {
     }
 
     .lives-container {
-        padding: 6px 16px;
-        gap: 8px;
+        padding: 8px 20px;
+        gap: 10px;
     }
 
     .life-pip {
-        width: 12px;
-        height: 12px;
+        width: 14px;
+        height: 14px;
     }
 
     .game-title {
-        font-size: 1.8rem;
+        font-size: 2rem;
     }
 
     .game-tagline {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         margin-top: 2px;
     }
 
     .slot {
-        font-size: 0.7rem;
-        border-radius: 8px;
-        letter-spacing: 0;
-    }
-
-    .pool-word {
-        padding: 10px 6px;
-        font-size: 0.7rem;
-        min-height: 42px;
-        border-radius: 8px;
-        letter-spacing: 0;
-    }
-
-    .word-pool {
-        gap: 6px;
-        padding: 0 4px;
-    }
-
-    .pool-inner {
-        padding: 8px;
-    }
-
-    .submit-btn {
-        padding: 10px 28px;
-        font-size: 0.75rem;
-        margin-top: 8px;
-    }
-
-    .pool-message {
-        font-size: 0.85rem;
-        margin-bottom: 8px;
+        font-size: 0.8rem;
+        border-radius: 10px;
     }
 
     .modal {
@@ -920,74 +948,83 @@ body {
         font-size: 1rem;
     }
 
-    .timer-display {
-        font-size: 0.8rem;
-    }
-
     .icon-btn {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
     }
 
     .icon-btn svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
     }
 
     .game-footer {
-        padding: 10px;
+        padding: 8px;
         font-size: 0.75rem;
     }
 
     .drag-ghost {
-        padding: 12px 20px;
-        font-size: 0.85rem;
-    }
-
-    .feedback-message {
-        font-size: 1.1rem;
-        top: -35px;
+        padding: 14px 24px;
+        font-size: 0.95rem;
     }
 }
 
 /* Very small screens */
 @media (max-width: 380px) {
     :root {
-        --ring-width: calc(100vw - 16px);
-        --slot-width: clamp(54px, 16vw, 70px);
-        --slot-height: clamp(40px, 11vw, 52px);
-        --pool-width: 46vw;
-        --pool-height: 38vw;
+        --ring-width: calc(100vw - 24px);
+        --ring-height: calc(var(--ring-width) * 0.85);
+        --slot-width: clamp(58px, 17vw, 75px);
+        --slot-height: clamp(42px, 12vw, 55px);
     }
 
     .game-title {
-        font-size: 1.5rem;
+        font-size: 1.7rem;
     }
 
     .game-tagline {
-        font-size: 0.6rem;
+        font-size: 0.65rem;
     }
 
     .slot {
-        font-size: 0.6rem;
-    }
-
-    .pool-word {
-        font-size: 0.6rem;
-        padding: 8px 4px;
-        min-height: 36px;
-    }
-
-    .word-pool {
-        gap: 4px;
-    }
-
-    .submit-btn {
-        padding: 8px 22px;
         font-size: 0.7rem;
     }
 
-    .pool-message {
+    .pool-word {
         font-size: 0.75rem;
+        padding: 10px 6px;
+        min-height: 42px;
+    }
+
+    .word-pool {
+        gap: 6px;
+    }
+
+    .submit-btn {
+        padding: 10px 26px;
+        font-size: 0.8rem;
+    }
+
+    .pool-message {
+        font-size: 0.85rem;
+    }
+}
+
+/* Allow scrolling on mobile when content is tall */
+@media (max-width: 600px) {
+    body {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .app-container {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    .game-board {
+        flex: none;
+        min-height: auto;
     }
 }
