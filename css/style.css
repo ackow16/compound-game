@@ -745,113 +745,230 @@ body {
     margin-top: 4px;
 }
 
-/* Responsive */
+/* Responsive - Tablet */
+@media (max-width: 768px) {
+    :root {
+        --ring-width: min(96vw, 600px);
+        --ring-height: calc(var(--ring-width) * 0.68);
+        --slot-width: clamp(80px, calc(var(--ring-width) * 0.17), 110px);
+        --slot-height: clamp(55px, calc(var(--ring-height) * 0.16), 75px);
+        --pool-width: calc(var(--ring-width) * 0.46);
+        --pool-height: calc(var(--ring-height) * 0.50);
+    }
+}
+
+/* Responsive - Mobile */
 @media (max-width: 600px) {
     :root {
-        --ring-width: min(98vw, 480px);
-        --ring-height: calc(var(--ring-width) * 0.66);
-        --slot-width: clamp(72px, calc(var(--ring-width) * 0.18), 100px);
-        --slot-height: clamp(52px, calc(var(--ring-height) * 0.17), 70px);
-        --pool-width: calc(var(--ring-width) * 0.48);
-        --pool-height: calc(var(--ring-height) * 0.52);
+        --ring-width: 100vw;
+        --ring-height: calc(var(--ring-width) * 0.72);
+        --slot-width: clamp(58px, 17vw, 80px);
+        --slot-height: clamp(42px, 11vw, 58px);
+        --pool-width: 46vw;
+        --pool-height: 38vw;
     }
 
     .app-container {
-        padding: 0 12px;
+        padding: 0 8px;
     }
 
+    /* Restructure header for mobile - stack layout */
     .game-header {
-        padding: 10px 0;
-    }
-
-    .game-title {
-        font-size: 1.8rem;
-    }
-
-    .slot {
-        font-size: 0.7rem;
-        border-radius: 8px;
-    }
-
-    .pool-word {
-        padding: 10px 6px;
-        font-size: 0.7rem;
-        min-height: 44px;
-        border-radius: 8px;
-    }
-
-    .word-pool {
-        gap: 5px;
-        padding: 0 4px;
-    }
-
-    .pool-inner {
-        padding: 8px;
-    }
-
-    .submit-btn {
-        padding: 10px 28px;
-        font-size: 0.75rem;
-        margin-top: 8px;
-    }
-
-    .pool-message {
-        font-size: 0.85rem;
-        margin-bottom: 8px;
-    }
-
-    .modal {
-        padding: 28px 20px;
-    }
-
-    .modal-title {
-        font-size: 1.75rem;
-    }
-
-    .stats-summary {
-        gap: 8px;
-    }
-
-    .stat-item {
-        padding: 10px;
-    }
-
-    .stat-value {
-        font-size: 1.25rem;
-    }
-
-    .start-title {
-        font-size: 3rem;
-    }
-
-    .start-subtitle {
-        font-size: 0.85rem;
-        margin-bottom: 24px;
-    }
-
-    .start-description {
-        margin-bottom: 32px;
-    }
-
-    .start-description p {
-        font-size: 1rem;
-    }
-
-    .start-btn {
-        padding: 14px 48px;
-        font-size: 1rem;
-    }
-
-    .timer-display {
-        font-size: 0.8rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 0;
+        gap: 4px;
     }
 
     .header-left {
-        gap: 8px;
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 4px;
+    }
+
+    .header-center {
+        order: 1;
+    }
+
+    .header-right {
+        order: 2;
+        justify-self: center;
+    }
+
+    /* Smaller lives on mobile */
+    .lives-container {
+        padding: 4px 12px;
+        gap: 6px;
+    }
+
+    .life-pip {
+        width: 10px;
+        height: 10px;
+    }
+
+    .game-title {
+        font-size: 1.6rem;
+    }
+
+    .game-tagline {
+        font-size: 0.65rem;
+        margin-top: 2px;
+    }
+
+    .slot {
+        font-size: 0.6rem;
+        border-radius: 6px;
+        letter-spacing: 0;
+    }
+
+    .pool-word {
+        padding: 8px 4px;
+        font-size: 0.6rem;
+        min-height: 36px;
+        border-radius: 6px;
+        letter-spacing: 0;
+    }
+
+    .word-pool {
+        gap: 4px;
+        padding: 0 2px;
+    }
+
+    .pool-inner {
+        padding: 6px;
+    }
+
+    .submit-btn {
+        padding: 8px 24px;
+        font-size: 0.7rem;
+        margin-top: 6px;
+    }
+
+    .pool-message {
+        font-size: 0.75rem;
+        margin-bottom: 6px;
+    }
+
+    .modal {
+        padding: 24px 16px;
+        border-radius: 16px;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    .modal-text {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+
+    .stats-summary {
+        gap: 6px;
+        margin-bottom: 20px;
+    }
+
+    .stat-item {
+        padding: 8px;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+
+    .stat-label {
+        font-size: 0.65rem;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        font-size: 0.85rem;
+    }
+
+    .start-title {
+        font-size: 2.5rem;
+    }
+
+    .start-subtitle {
+        font-size: 0.75rem;
+        margin-bottom: 20px;
+    }
+
+    .start-description {
+        margin-bottom: 28px;
+    }
+
+    .start-description p {
+        font-size: 0.95rem;
+    }
+
+    .start-btn {
+        padding: 14px 40px;
+        font-size: 0.9rem;
+    }
+
+    .timer-display {
+        font-size: 0.75rem;
     }
 
     .icon-btn {
-        width: 38px;
-        height: 38px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .icon-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .game-footer {
+        padding: 8px;
+        font-size: 0.7rem;
+    }
+
+    .drag-ghost {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+    }
+
+    .feedback-message {
+        font-size: 1rem;
+        top: -30px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+    :root {
+        --slot-width: 52px;
+        --slot-height: 38px;
+        --pool-width: 44vw;
+        --pool-height: 36vw;
+    }
+
+    .game-title {
+        font-size: 1.4rem;
+    }
+
+    .slot {
+        font-size: 0.55rem;
+    }
+
+    .pool-word {
+        font-size: 0.55rem;
+        padding: 6px 3px;
+        min-height: 32px;
+    }
+
+    .word-pool {
+        gap: 3px;
+    }
+
+    .submit-btn {
+        padding: 6px 20px;
+        font-size: 0.65rem;
     }
 }
