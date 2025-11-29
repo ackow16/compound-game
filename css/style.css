@@ -760,31 +760,57 @@ body {
 /* Responsive - Mobile */
 @media (max-width: 600px) {
     :root {
-        /* Square board - no pool inside, so can be more square */
-        --ring-width: calc(100vw - 32px);
-        --ring-height: calc(var(--ring-width) * 0.85);
-        --slot-width: clamp(68px, 20vw, 90px);
-        --slot-height: clamp(48px, 13vw, 65px);
+        /* Smaller slots to fit with padding */
+        --slot-width: clamp(56px, 16.5vw, 72px);
+        --slot-height: clamp(40px, 11vw, 54px);
+    }
+
+    body {
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .app-container {
-        padding: 0 16px;
+        padding: 0 8px;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
     }
 
-    /* Game board becomes vertical stack */
+    /* Vertical stack layout */
     .game-board {
+        flex: none;
+        display: flex;
         flex-direction: column;
-        gap: 16px;
-        padding: 8px 0;
+        align-items: center;
+        padding: 0;
+        gap: 0;
     }
 
-    /* Ring container - just the slots, no pool inside */
+    /* Ring container becomes flex column */
     .ring-container {
-        width: var(--ring-width);
-        height: var(--ring-height);
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        position: relative;
     }
 
-    /* Move pool BELOW the board on mobile */
+    /* Slots layer - fixed aspect ratio box with internal padding */
+    .slots-layer {
+        position: relative;
+        width: 100%;
+        padding-top: 75%; /* 4:3 aspect ratio */
+        margin: 0 auto;
+    }
+
+    /* Slots positioned within the padded area */
+    .slots-layer .slot {
+        /* Slots are already absolutely positioned by JS */
+        /* Add margin from edges via the percentage positions */
+    }
+
+    /* Pool goes below, not overlapping */
     .pool-container {
         position: relative;
         top: auto;
@@ -792,14 +818,16 @@ body {
         transform: none;
         width: 100%;
         height: auto;
-        margin-top: 12px;
+        padding: 16px 8px;
+        z-index: 5;
     }
 
     .pool-inner {
-        padding: 12px;
+        padding: 16px;
         background: var(--card-bg);
         border-radius: 16px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
     .word-pool {
@@ -809,39 +837,46 @@ body {
     }
 
     .pool-word {
-        padding: 12px 8px;
-        font-size: 0.85rem;
-        min-height: 48px;
-        border-radius: 10px;
+        padding: 14px 8px;
+        font-size: 0.9rem;
+        min-height: 50px;
+        border-radius: 12px;
     }
 
     .pool-message {
-        font-size: 0.9rem;
-        margin-bottom: 10px;
+        font-size: 1rem;
+        margin-bottom: 12px;
+        font-weight: 500;
     }
 
     .submit-btn {
-        padding: 12px 32px;
-        font-size: 0.85rem;
-        margin-top: 12px;
+        padding: 14px 36px;
+        font-size: 0.9rem;
+        margin-top: 16px;
     }
 
     .feedback-message {
         position: relative;
         top: auto;
+        left: auto;
         transform: none;
-        margin-bottom: 8px;
-        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 12px;
+        font-size: 1.2rem;
     }
 
-    /* Restructure header for mobile - 2 rows */
+    .feedback-message:not(:empty) {
+        transform: none;
+    }
+
+    /* Header */
     .game-header {
         display: grid;
         grid-template-columns: 50px 1fr 50px;
         grid-template-rows: auto auto;
         align-items: center;
-        padding: 10px 0 6px;
-        row-gap: 14px;
+        padding: 12px 8px 8px;
+        row-gap: 12px;
     }
 
     .header-left {
@@ -867,32 +902,35 @@ body {
     }
 
     .lives-container {
-        padding: 8px 20px;
-        gap: 10px;
+        padding: 8px 24px;
+        gap: 12px;
     }
 
     .life-pip {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
     }
 
     .game-title {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
 
     .game-tagline {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         margin-top: 2px;
+        letter-spacing: 0.1em;
     }
 
     .slot {
-        font-size: 0.8rem;
-        border-radius: 10px;
+        font-size: 0.75rem;
+        border-radius: 8px;
     }
 
+    /* Modals */
     .modal {
         padding: 28px 20px;
         border-radius: 20px;
+        width: 92%;
     }
 
     .modal-title {
@@ -910,37 +948,48 @@ body {
     }
 
     .stat-item {
-        padding: 12px;
+        padding: 12px 8px;
     }
 
     .stat-value {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 
     .stat-label {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
 
     .btn {
-        padding: 14px 28px;
+        padding: 14px 24px;
         font-size: 0.9rem;
     }
 
+    .modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-secondary {
+        margin-left: 0;
+    }
+
+    /* Start screen */
     .start-title {
-        font-size: 3rem;
+        font-size: 2.75rem;
     }
 
     .start-subtitle {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         margin-bottom: 24px;
     }
 
     .start-description {
         margin-bottom: 32px;
+        padding: 0 16px;
     }
 
     .start-description p {
-        font-size: 1.05rem;
+        font-size: 1rem;
     }
 
     .start-btn {
@@ -959,41 +1008,40 @@ body {
     }
 
     .game-footer {
-        padding: 8px;
+        padding: 12px 8px;
         font-size: 0.75rem;
     }
 
     .drag-ghost {
         padding: 14px 24px;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        border-radius: 14px;
     }
 }
 
 /* Very small screens */
 @media (max-width: 380px) {
     :root {
-        --ring-width: calc(100vw - 24px);
-        --ring-height: calc(var(--ring-width) * 0.85);
-        --slot-width: clamp(58px, 17vw, 75px);
-        --slot-height: clamp(42px, 12vw, 55px);
+        --slot-width: clamp(48px, 14vw, 62px);
+        --slot-height: clamp(36px, 10vw, 48px);
     }
 
     .game-title {
-        font-size: 1.7rem;
+        font-size: 1.5rem;
     }
 
     .game-tagline {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
     }
 
     .slot {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
 
     .pool-word {
-        font-size: 0.75rem;
-        padding: 10px 6px;
-        min-height: 42px;
+        font-size: 0.8rem;
+        padding: 12px 6px;
+        min-height: 44px;
     }
 
     .word-pool {
@@ -1001,30 +1049,21 @@ body {
     }
 
     .submit-btn {
-        padding: 10px 26px;
-        font-size: 0.8rem;
+        padding: 12px 28px;
+        font-size: 0.85rem;
     }
 
     .pool-message {
-        font-size: 0.85rem;
-    }
-}
-
-/* Allow scrolling on mobile when content is tall */
-@media (max-width: 600px) {
-    body {
-        overflow-y: auto;
-        overflow-x: hidden;
+        font-size: 0.9rem;
     }
 
-    .app-container {
-        height: auto;
-        min-height: 100vh;
-        min-height: 100dvh;
+    .lives-container {
+        padding: 6px 18px;
+        gap: 10px;
     }
 
-    .game-board {
-        flex: none;
-        min-height: auto;
+    .life-pip {
+        width: 14px;
+        height: 14px;
     }
 }
