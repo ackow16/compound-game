@@ -107,9 +107,7 @@ export class UI {
     createSlots() {
         const slotPositions = [];
         const size = 5;
-        // Use larger inset on mobile to keep slots away from edges
-        const isMobile = window.innerWidth <= 600;
-        const inset = isMobile ? 10 : 3;
+        const inset = 3;
         const range = 100 - (2 * inset);
         const step = range / (size - 1);
 

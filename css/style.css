@@ -760,113 +760,98 @@ body {
 /* Responsive - Mobile */
 @media (max-width: 600px) {
     :root {
-        /* Smaller slots to fit with padding */
+        /* Taller slots, same width */
         --slot-width: clamp(56px, 16.5vw, 72px);
-        --slot-height: clamp(40px, 11vw, 54px);
+        --slot-height: clamp(48px, 13vw, 62px);
     }
 
     body {
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: hidden;
     }
 
     .app-container {
         padding: 0 8px;
-        height: auto;
-        min-height: 100vh;
-        min-height: 100dvh;
+        height: 100vh;
+        height: 100dvh;
     }
 
-    /* Vertical stack layout */
     .game-board {
-        flex: none;
+        flex: 1;
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
         padding: 0;
-        gap: 0;
     }
 
-    /* Ring container becomes flex column */
     .ring-container {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: auto;
+        width: var(--ring-width);
+        height: var(--ring-height);
         position: relative;
     }
 
-    /* Slots layer - fixed aspect ratio box with internal padding */
     .slots-layer {
-        position: relative;
-        width: 100%;
-        padding-top: 75%; /* 4:3 aspect ratio */
-        margin: 0 auto;
+        position: absolute;
+        inset: 0;
     }
 
-    /* Slots positioned within the padded area */
-    .slots-layer .slot {
-        /* Slots are already absolutely positioned by JS */
-        /* Add margin from edges via the percentage positions */
+    /* Smaller text in slots to fit */
+    .slot {
+        font-size: 0.65rem;
+        border-radius: 8px;
     }
 
-    /* Pool goes below, not overlapping */
+    /* Pool inside the ring */
     .pool-container {
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-        width: 100%;
-        height: auto;
-        padding: 16px 8px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: var(--pool-width);
+        height: var(--pool-height);
+        padding: 0;
         z-index: 5;
     }
 
     .pool-inner {
-        padding: 16px;
+        padding: 12px;
         background: var(--card-bg);
         border-radius: 16px;
         border: 1px solid rgba(0, 0, 0, 0.1);
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .word-pool {
-        gap: 8px;
+        gap: 6px;
         padding: 0;
         width: 100%;
+        flex: 1;
+        overflow-y: auto;
     }
 
     .pool-word {
-        padding: 14px 8px;
-        font-size: 0.9rem;
-        min-height: 50px;
-        border-radius: 12px;
+        padding: 10px 6px;
+        font-size: 0.75rem;
+        min-height: 40px;
+        border-radius: 10px;
     }
 
     .pool-message {
-        font-size: 1rem;
-        margin-bottom: 12px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
         font-weight: 500;
     }
 
     .submit-btn {
-        padding: 14px 36px;
-        font-size: 0.9rem;
-        margin-top: 16px;
+        padding: 12px 28px;
+        font-size: 0.8rem;
+        margin-top: 10px;
     }
 
     .feedback-message {
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-        text-align: center;
-        margin-bottom: 12px;
-        font-size: 1.2rem;
-    }
-
-    .feedback-message:not(:empty) {
-        transform: none;
+        font-size: 1rem;
     }
 
     /* Header */
@@ -919,11 +904,6 @@ body {
         font-size: 0.7rem;
         margin-top: 2px;
         letter-spacing: 0.1em;
-    }
-
-    .slot {
-        font-size: 0.75rem;
-        border-radius: 8px;
     }
 
     /* Modals */
