@@ -1,4 +1,4 @@
-import { dailyPuzzle } from './data.js?v=5';
+import { dailyPuzzle } from './data.js?v=13';
 
 export class UI {
     constructor(game) {
@@ -23,6 +23,8 @@ export class UI {
         this.modalOverlay = document.getElementById('modal-overlay');
         this.winModal = document.getElementById('win-modal');
         this.helpOverlay = document.getElementById('help-overlay');
+        this.tutorialOverlay = document.getElementById('tutorial-overlay');
+        this.tutorialStep = 1;
 
         // Drag state
         this.draggedWord = null;
@@ -51,6 +53,7 @@ export class UI {
     }
 
     init() {
+        console.log('UI init started');
         const dateStr = dailyPuzzle.getDateString();
         this.dateDisplay.textContent = dateStr;
         if (this.startDate) {
@@ -63,16 +66,154 @@ export class UI {
             puzzleNumber.textContent = `Puzzle #${dailyPuzzle.getPuzzleNumber()}`;
         }
 
+        // Set up dynamic sizing
+        this.calculateLayout();
+        window.addEventListener('resize', () => this.calculateLayout());
+
         this.createSlots();
         this.setupEventListeners();
+        this.setupTutorial();
+        console.log('UI init complete, startBtn:', this.startBtn);
         this.render();
     }
 
-    startGame() {
+    setupTutorial() {
+        // Hide tutorial initially - it shows after clicking Play
+        if (this.tutorialOverlay) {
+            this.tutorialOverlay.classList.add('hidden');
+        }
+
+        // Tutorial navigation
+        const nextBtn = document.getElementById('tutorial-next-btn');
+        const dots = document.querySelectorAll('.tutorial-dots .dot');
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (this.tutorialStep < 2) {
+                    this.tutorialStep++;
+                    this.updateTutorialStep();
+                } else {
+                    this.closeTutorial();
+                }
+            });
+        }
+
+        // Dot navigation
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                this.tutorialStep = parseInt(dot.dataset.step);
+                this.updateTutorialStep();
+            });
+        });
+    }
+
+    updateTutorialStep() {
+        const steps = document.querySelectorAll('.tutorial-step');
+        const dots = document.querySelectorAll('.tutorial-dots .dot');
+        const nextBtn = document.getElementById('tutorial-next-btn');
+
+        steps.forEach(step => {
+            step.classList.remove('active');
+            if (parseInt(step.dataset.step) === this.tutorialStep) {
+                step.classList.add('active');
+            }
+        });
+
+        dots.forEach(dot => {
+            dot.classList.remove('active');
+            if (parseInt(dot.dataset.step) === this.tutorialStep) {
+                dot.classList.add('active');
+            }
+        });
+
+        // Update button text on last step
+        if (nextBtn) {
+            nextBtn.textContent = this.tutorialStep === 2 ? "Let's Play!" : 'Next';
+        }
+    }
+
+    closeTutorial() {
+        if (this.tutorialOverlay) {
+            this.tutorialOverlay.classList.add('hidden');
+        }
+        // Go directly to the game (skip start screen)
         if (this.startOverlay) {
             this.startOverlay.classList.add('hidden');
         }
         this.startTimer();
+    }
+
+    calculateLayout() {
+        try {
+            const root = document.documentElement;
+            const header = document.querySelector('.game-header');
+            const footer = document.querySelector('.game-footer');
+
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+            const headerHeight = header ? header.offsetHeight : 80;
+            const footerHeight = footer ? footer.offsetHeight : 50;
+
+            const verticalPadding = 20;
+            const horizontalPadding = 32; // More padding on sides
+            const availableHeight = viewportHeight - headerHeight - footerHeight - verticalPadding;
+            const availableWidth = viewportWidth - horizontalPadding;
+
+            const aspectRatio = 0.68;
+            let ringWidth = Math.min(availableWidth, 800);
+            let ringHeight = ringWidth * aspectRatio;
+
+            if (ringHeight > availableHeight) {
+                ringHeight = availableHeight;
+                ringWidth = ringHeight / aspectRatio;
+            }
+
+            ringWidth = Math.max(ringWidth, 280);
+            ringHeight = Math.max(ringHeight, 180);
+
+            // Slot size scales with ring, but capped more aggressively for thin screens
+            const slotWidth = Math.max(45, Math.min(150, ringWidth * 0.16));
+            const slotHeight = Math.max(32, Math.min(95, ringHeight * 0.15));
+
+            // Pool must fit between the slots - calculate available space
+            // Slots are positioned at ~5% and ~95% from edges, so pool has ~90% minus slot widths
+            const poolMaxWidth = ringWidth * 0.52 - slotWidth;
+            const poolMaxHeight = ringHeight * 0.52 - slotHeight;
+            const poolWidth = Math.max(180, Math.min(ringWidth * 0.48, poolMaxWidth));
+            const poolHeight = Math.max(120, Math.min(ringHeight * 0.50, poolMaxHeight));
+
+            // Increase inset for slots so they don't touch edges
+            const slotInset = Math.max(5, (slotWidth / ringWidth) * 55);
+            root.style.setProperty('--slot-inset', `${slotInset}%`);
+
+            root.style.setProperty('--ring-width', `${ringWidth}px`);
+            root.style.setProperty('--ring-height', `${ringHeight}px`);
+            root.style.setProperty('--slot-width', `${slotWidth}px`);
+            root.style.setProperty('--slot-height', `${slotHeight}px`);
+            root.style.setProperty('--pool-width', `${poolWidth}px`);
+            root.style.setProperty('--pool-height', `${poolHeight}px`);
+
+            const slotFontSize = Math.max(0.55, Math.min(1.25, slotWidth / 100));
+            root.style.setProperty('--slot-font-size', `${slotFontSize}rem`);
+
+            const poolFontSize = Math.max(0.6, Math.min(1, slotWidth / 110));
+            root.style.setProperty('--pool-font-size', `${poolFontSize}rem`);
+        } catch (e) {
+            console.error('Layout calculation error:', e);
+        }
+    }
+
+    startGame() {
+        console.log('startGame called');
+        if (this.startOverlay) {
+            this.startOverlay.classList.add('hidden');
+        }
+        // Show tutorial after clicking Play
+        if (this.tutorialOverlay) {
+            this.tutorialStep = 1;
+            this.updateTutorialStep();
+            this.tutorialOverlay.classList.remove('hidden');
+        }
     }
 
     startTimer() {
@@ -105,12 +246,30 @@ export class UI {
     }
 
     createSlots() {
-        const slotPositions = [];
-        const size = 5;
-        const inset = 3;
-        const range = 100 - (2 * inset);
-        const step = range / (size - 1);
+        this.updateSlotPositions();
+        window.addEventListener('resize', () => this.updateSlotPositions());
+    }
 
+    updateSlotPositions() {
+        // Clear existing slots
+        if (this.slotsLayer.children.length === 0) {
+            // First time - create slots
+            for (let i = 0; i < 16; i++) {
+                const slot = document.createElement('div');
+                slot.classList.add('slot', 'empty');
+                slot.dataset.index = i;
+                slot.style.transform = `translate(-50%, -50%)`;
+                this.setupSlotEvents(slot);
+                this.slotsLayer.appendChild(slot);
+            }
+        }
+
+        // Calculate positions with dynamic inset
+        const inset = 6; // Percentage from edge
+        const range = 100 - (2 * inset);
+        const step = range / 4; // 5 slots per side = 4 gaps
+
+        const slotPositions = [];
         // Top Row (0-4)
         for (let i = 0; i < 5; i++) {
             slotPositions.push({ x: inset + (i * step), y: inset });
@@ -128,15 +287,13 @@ export class UI {
             slotPositions.push({ x: inset, y: (100 - inset) - (i * step) });
         }
 
-        slotPositions.forEach((pos, i) => {
-            const slot = document.createElement('div');
-            slot.classList.add('slot', 'empty');
-            slot.dataset.index = i;
-            slot.style.left = `${pos.x}%`;
-            slot.style.top = `${pos.y}%`;
-            slot.style.transform = `translate(-50%, -50%)`;
-            this.setupSlotEvents(slot);
-            this.slotsLayer.appendChild(slot);
+        // Apply positions
+        const slots = this.slotsLayer.querySelectorAll('.slot');
+        slots.forEach((slot, i) => {
+            if (slotPositions[i]) {
+                slot.style.left = `${slotPositions[i].x}%`;
+                slot.style.top = `${slotPositions[i].y}%`;
+            }
         });
     }
 

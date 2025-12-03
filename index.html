@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=13">
 </head>
 <body>
     <div class="app-container">
@@ -88,8 +88,55 @@
         </div>
     </div>
 
-    <!-- Help Modal -->
-    <div class="modal-overlay hidden" id="help-overlay">
+    <!-- Tutorial Modal (shows after clicking Play) -->
+    <div class="modal-overlay hidden" id="tutorial-overlay">
+        <div class="modal modal-tutorial" id="tutorial-modal">
+            <div class="tutorial-content">
+                <div class="tutorial-step active" data-step="1">
+                    <h2 class="tutorial-title">How to Play</h2>
+                    <p class="tutorial-text">Connect words to form <strong>compound words</strong> in a continuous chain around the board.</p>
+                    <div class="tutorial-example">
+                        <div class="example-chain">
+                            <span class="example-word">SUN</span>
+                            <span class="example-arrow">→</span>
+                            <span class="example-word highlight">LIGHT</span>
+                            <span class="example-arrow">→</span>
+                            <span class="example-word">HOUSE</span>
+                        </div>
+                        <div class="example-compounds">
+                            <span class="compound-label">sun<strong>light</strong></span>
+                            <span class="compound-label"><strong>light</strong>house</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tutorial-step" data-step="2">
+                    <h2 class="tutorial-title">Drag & Drop</h2>
+                    <p class="tutorial-text">Drag words from the center to the slots around the edge. You have <strong>3 attempts</strong> to complete the chain!</p>
+                    <div class="tutorial-demo">
+                        <div class="demo-pool">
+                            <div class="demo-word" id="demo-drag-word">FIRE</div>
+                        </div>
+                        <div class="demo-arrow-container">
+                            <svg class="demo-arrow" viewBox="0 0 60 40">
+                                <path d="M5 20 Q30 20 45 20" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="4"/>
+                                <path d="M40 15 L50 20 L40 25" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="demo-slot">DROP HERE</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tutorial-nav">
+                <div class="tutorial-dots">
+                    <span class="dot active" data-step="1"></span>
+                    <span class="dot" data-step="2"></span>
+                </div>
+                <button class="btn btn-primary tutorial-btn" id="tutorial-next-btn">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal --><div class="modal-overlay hidden" id="help-overlay">
         <div class="modal modal-help" id="help-modal">
             <button class="modal-close" id="close-help-btn" aria-label="Close">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -118,6 +165,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/app.js?v=6"></script>
+    <script type="module" src="js/app.js?v=13"></script>
 </body>
 </html>
