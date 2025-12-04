@@ -39,6 +39,11 @@
         <main class="game-board">
             <div class="ring-container" id="ring-container">
                 <div class="slots-layer" id="slots-layer"></div>
+                <!-- Inner corner arrows showing clockwise direction -->
+                <i data-lucide="corner-right-down" class="direction-arrow top-right"></i>
+                <i data-lucide="corner-down-left" class="direction-arrow bottom-right"></i>
+                <i data-lucide="corner-left-up" class="direction-arrow bottom-left"></i>
+                <i data-lucide="corner-up-right" class="direction-arrow top-left"></i>
                 <div class="pool-container" id="pool-container">
                     <div class="pool-inner">
                         <div class="pool-message">Arrange the words</div>
@@ -165,6 +170,8 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
     <script type="module" src="js/app.js?v=14"></script>
 </body>
 </html>

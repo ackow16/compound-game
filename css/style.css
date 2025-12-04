@@ -167,6 +167,37 @@ body {
     transition: width 0.15s ease-out, height 0.15s ease-out;
 }
 
+/* Direction arrows - inner corners showing clockwise flow */
+.direction-arrow {
+    position: absolute;
+    width: clamp(14px, 3.5vw, 24px);
+    height: clamp(14px, 3.5vw, 24px);
+    color: var(--accent-primary);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.direction-arrow.top-right {
+    top: var(--arrow-inset, 15%);
+    right: var(--arrow-inset, 15%);
+}
+
+.direction-arrow.bottom-right {
+    bottom: var(--arrow-inset, 15%);
+    right: var(--arrow-inset, 15%);
+}
+
+.direction-arrow.bottom-left {
+    bottom: var(--arrow-inset, 15%);
+    left: var(--arrow-inset, 15%);
+}
+
+.direction-arrow.top-left {
+    top: var(--arrow-inset, 15%);
+    left: var(--arrow-inset, 15%);
+}
+
 /* Slots */
 .slot {
     position: absolute;

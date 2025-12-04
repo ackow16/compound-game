@@ -224,6 +224,10 @@ export class UI {
             const slotInset = slotInsetPercent;
             root.style.setProperty('--slot-inset', slotInset);
 
+            // Arrow inset - positioned just inside the slot area
+            const arrowInset = slotInset + (slotWidth / ringWidth) * 50 + 2;
+            root.style.setProperty('--arrow-inset', `${arrowInset}%`);
+
             // ========== POOL SIZE ==========
             const slotOverlapH = (slotWidth / ringWidth) * 50;
             const slotOverlapV = (slotHeight / ringHeight) * 50;
