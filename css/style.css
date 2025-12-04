@@ -19,13 +19,20 @@
     --font-display: 'DM Serif Display', serif;
     --font-body: 'DM Sans', sans-serif;
 
-    /* Dimensions - Wide rectangle to reduce vertical gaps */
-    --ring-width: min(94vw, 800px);
-    --ring-height: calc(var(--ring-width) * 0.68);
-    --slot-width: clamp(110px, calc(var(--ring-width) * 0.19), 150px);
-    --slot-height: clamp(70px, calc(var(--ring-height) * 0.18), 95px);
-    --pool-width: calc(var(--ring-width) * 0.50);
-    --pool-height: calc(var(--ring-height) * 0.54);
+    /* Dimensions - JS will override these with calculated values */
+    --safe-margin: 24px;
+    --slot-inset: 7;
+    --ring-width: 400px;
+    --ring-height: 300px;
+    --slot-width: 100px;
+    --slot-height: 70px;
+    --pool-width: 200px;
+    --pool-height: 160px;
+    --slot-font-size: 1rem;
+    --pool-font-size: 0.85rem;
+    --pool-word-height: 40px;
+    --pool-word-pad-v: 8px;
+    --pool-word-pad-h: 6px;
 
     /* Shadows - The "Tactile" part */
     --shadow-rest: 0 2px 0 rgba(0, 0, 0, 0.1);
@@ -62,7 +69,7 @@ body {
     max-width: 900px;
     margin: 0 auto;
     width: 100%;
-    padding: 0 24px;
+    padding: 0 var(--safe-margin);
     position: relative;
     z-index: 1;
 }
@@ -157,6 +164,7 @@ body {
     position: relative;
     width: var(--ring-width);
     height: var(--ring-height);
+    transition: width 0.15s ease-out, height 0.15s ease-out;
 }
 
 /* Slots */
@@ -172,7 +180,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.02em;
     border-radius: 14px;
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: transform 0.1s, box-shadow 0.1s, width 0.15s ease-out, height 0.15s ease-out, font-size 0.15s ease-out;
     z-index: 1;
 
     /* Solid Tactile Look */
@@ -228,6 +236,7 @@ body {
     width: var(--pool-width);
     height: var(--pool-height);
     z-index: 2;
+    transition: width 0.15s ease-out, height 0.15s ease-out;
 }
 
 .pool-inner {
@@ -272,7 +281,7 @@ body {
     cursor: grab;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: var(--shadow-rest);
-    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s, min-height 0.15s ease-out, padding 0.15s ease-out, font-size 0.15s ease-out;
     user-select: none;
     text-align: center;
     display: flex;
@@ -303,19 +312,19 @@ body {
 
 /* Submit Button */
 .submit-btn {
-    padding: clamp(4px, min(1.5vw, 1.2vh), 12px) clamp(12px, 5vw, 36px);
+    padding: var(--pool-word-pad-v, 8px) clamp(12px, 4vw, 32px);
     background: var(--accent-primary);
     border: none;
     border-radius: 50px;
     color: white;
     font-family: var(--font-body);
-    font-size: clamp(0.5rem, min(2vw, 1.8vh), 0.85rem);
+    font-size: var(--pool-font-size, 0.85rem);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;
     box-shadow: 0 2px 0 #1a3d28;
-    transition: all 0.1s;
+    transition: all 0.15s ease-out;
     flex-shrink: 0;
     white-space: nowrap;
 }
@@ -333,20 +342,21 @@ body {
 /* Feedback */
 .feedback-message {
     position: absolute;
-    top: -40px;
+    top: -8px;
     left: 50%;
-    transform: translateX(-50%) translateY(-10px);
+    transform: translateX(-50%) translateY(-100%);
     font-family: var(--font-display);
     font-size: 1.3rem;
     color: var(--text-primary);
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     white-space: nowrap;
+    z-index: 10;
 }
 
 .feedback-message:not(:empty) {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(-100%);
 }
 
 .feedback-message.success {
@@ -754,60 +764,21 @@ body {
     margin-top: 4px;
 }
 
-/* Responsive - Tablet */
+/* Responsive - Tablet (style only, JS handles sizing) */
 @media (max-width: 768px) {
-    :root {
-        --ring-width: min(96vw, 600px);
-        --ring-height: calc(var(--ring-width) * 0.68);
-        --slot-width: clamp(80px, calc(var(--ring-width) * 0.17), 110px);
-        --slot-height: clamp(55px, calc(var(--ring-height) * 0.16), 75px);
-        --pool-width: calc(var(--ring-width) * 0.46);
-        --pool-height: calc(var(--ring-height) * 0.50);
-    }
+    /* No size overrides - JS calculateLayout() handles all dimensions */
 }
 
-/* Responsive - Mobile */
+/* Responsive - Mobile (style only, JS handles sizing) */
 @media (max-width: 600px) {
-    :root {
-        /* Taller slots, same width */
-        --slot-width: clamp(56px, 16.5vw, 72px);
-        --slot-height: clamp(48px, 13vw, 62px);
-    }
-
-    body {
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
-
-    .app-container {
-        padding: 0 8px;
-        min-height: 100vh;
-        min-height: 100dvh;
-    }
+    /* No :root size overrides - JS handles all dimensions */
 
     .game-board {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-        min-height: 280px; /* Prevent collapse on short viewports */
+        min-height: 240px; /* Prevent collapse on short viewports */
     }
 
-    .ring-container {
-        width: var(--ring-width);
-        height: var(--ring-height);
-        position: relative;
-    }
-
-    .slots-layer {
-        position: absolute;
-        inset: 0;
-    }
-
-    /* Smaller text in slots to fit */
+    /* Style adjustments only */
     .slot {
-        font-size: 0.65rem;
         border-radius: 8px;
     }
 
@@ -850,8 +821,8 @@ body {
     }
 
     .submit-btn {
-        padding: 8px 20px;
-        margin-top: 6px;
+        /* Let the main CSS handle padding dynamically */
+        margin-top: 4px;
     }
 
     .feedback-message {
