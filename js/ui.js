@@ -1,4 +1,4 @@
-import { dailyPuzzle } from './data.js?v=13';
+import { dailyPuzzle } from './data.js?v=14';
 
 export class UI {
     constructor(game) {
@@ -155,11 +155,18 @@ export class UI {
             const footerHeight = footer ? footer.offsetHeight : 50;
 
             const verticalPadding = 20;
-            const horizontalPadding = 32; // More padding on sides
+            const horizontalPadding = 32;
             const availableHeight = viewportHeight - headerHeight - footerHeight - verticalPadding;
             const availableWidth = viewportWidth - horizontalPadding;
 
-            const aspectRatio = 0.68;
+            // Dynamic aspect ratio: wider screens get 0.68, narrow screens get up to 0.95
+            // Smoothly interpolate based on screen shape
+            const screenRatio = availableWidth / availableHeight;
+            // Clamp between 0.5 (very narrow) and 1.5 (very wide)
+            const clampedRatio = Math.max(0.5, Math.min(1.5, screenRatio));
+            // Map: 0.5 -> 0.95 (tall), 1.5 -> 0.68 (wide)
+            const aspectRatio = 0.95 - (clampedRatio - 0.5) * (0.95 - 0.68) / (1.5 - 0.5);
+
             let ringWidth = Math.min(availableWidth, 800);
             let ringHeight = ringWidth * aspectRatio;
 
@@ -168,23 +175,26 @@ export class UI {
                 ringWidth = ringHeight / aspectRatio;
             }
 
-            ringWidth = Math.max(ringWidth, 280);
-            ringHeight = Math.max(ringHeight, 180);
+            ringWidth = Math.max(ringWidth, 250);
+            ringHeight = Math.max(ringHeight, 260);
 
-            // Slot size scales with ring, but capped more aggressively for thin screens
-            const slotWidth = Math.max(45, Math.min(150, ringWidth * 0.16));
-            const slotHeight = Math.max(32, Math.min(95, ringHeight * 0.15));
+            // Slot size scales with ring
+            const slotWidth = Math.max(42, Math.min(150, ringWidth * 0.15));
+            // Slots get taller on narrow screens (higher aspect ratio)
+            const slotHeightRatio = aspectRatio > 0.8 ? 0.11 : 0.13;
+            const slotHeight = Math.max(30, Math.min(95, ringHeight * slotHeightRatio));
 
-            // Pool must fit between the slots - calculate available space
-            // Slots are positioned at ~5% and ~95% from edges, so pool has ~90% minus slot widths
-            const poolMaxWidth = ringWidth * 0.52 - slotWidth;
-            const poolMaxHeight = ringHeight * 0.52 - slotHeight;
-            const poolWidth = Math.max(180, Math.min(ringWidth * 0.48, poolMaxWidth));
-            const poolHeight = Math.max(120, Math.min(ringHeight * 0.50, poolMaxHeight));
+            // Inset from edges
+            const slotInset = 6;
 
-            // Increase inset for slots so they don't touch edges
-            const slotInset = Math.max(5, (slotWidth / ringWidth) * 55);
-            root.style.setProperty('--slot-inset', `${slotInset}%`);
+            // Pool fits in the center between slots
+            const slotOverlapH = (slotWidth / ringWidth) * 100 / 2;
+            const slotOverlapV = (slotHeight / ringHeight) * 100 / 2;
+            const availablePoolWidth = ringWidth * (1 - 2 * (slotInset + slotOverlapH + 2) / 100);
+            const availablePoolHeight = ringHeight * (1 - 2 * (slotInset + slotOverlapV + 2) / 100);
+
+            const poolWidth = Math.max(100, availablePoolWidth * 0.95);
+            const poolHeight = Math.max(80, availablePoolHeight * 0.95);
 
             root.style.setProperty('--ring-width', `${ringWidth}px`);
             root.style.setProperty('--ring-height', `${ringHeight}px`);
@@ -193,11 +203,20 @@ export class UI {
             root.style.setProperty('--pool-width', `${poolWidth}px`);
             root.style.setProperty('--pool-height', `${poolHeight}px`);
 
-            const slotFontSize = Math.max(0.55, Math.min(1.25, slotWidth / 100));
+            // Font sizes scale smoothly
+            const slotFontSize = Math.max(0.45, Math.min(1.25, slotWidth / 95));
             root.style.setProperty('--slot-font-size', `${slotFontSize}rem`);
 
-            const poolFontSize = Math.max(0.6, Math.min(1, slotWidth / 110));
+            const poolFontSize = Math.max(0.45, Math.min(1, Math.min(poolWidth / 200, poolHeight / 180, slotWidth / 80)));
             root.style.setProperty('--pool-font-size', `${poolFontSize}rem`);
+
+            // Pool word sizing scales smoothly - use smaller of width/height based scaling
+            const poolWordHeight = Math.max(20, Math.min(54, Math.min(poolHeight * 0.11, poolWidth * 0.08)));
+            const poolWordPadV = Math.max(2, Math.min(14, poolHeight * 0.02));
+            const poolWordPadH = Math.max(2, Math.min(8, poolWidth * 0.012));
+            root.style.setProperty('--pool-word-height', `${poolWordHeight}px`);
+            root.style.setProperty('--pool-word-pad-v', `${poolWordPadV}px`);
+            root.style.setProperty('--pool-word-pad-h', `${poolWordPadH}px`);
         } catch (e) {
             console.error('Layout calculation error:', e);
         }

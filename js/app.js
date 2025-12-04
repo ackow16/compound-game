@@ -1,6 +1,6 @@
-import { dailyPuzzle } from './data.js?v=13';
-import { Game } from './game.js?v=13';
-import { UI } from './ui.js?v=13';
+import { dailyPuzzle } from './data.js?v=14';
+import { Game } from './game.js?v=14';
+import { UI } from './ui.js?v=14';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Load puzzle data from server first

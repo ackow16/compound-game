@@ -1,4 +1,4 @@
-import { dailyPuzzle } from './data.js?v=13';
+import { dailyPuzzle } from './data.js?v=14';
 
 export class Game {
     constructor() {
