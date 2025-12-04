@@ -1346,22 +1346,21 @@ body {
 /* Ad Containers */
 .ad-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
     max-width: 728px;
     margin: 0 auto;
     padding: 12px 0;
-    min-height: 50px;
+    min-height: 90px;
+    gap: 8px;
 }
 
-/* Placeholder text when ad not loaded */
-.ad-container:empty::before,
-.ad-container > div:empty::before {
-    content: 'Ad';
-    font-size: 0.7rem;
+.ad-label {
+    font-size: 0.65rem;
     color: var(--text-secondary);
-    opacity: 0.3;
+    opacity: 0.4;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
