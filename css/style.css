@@ -1352,6 +1352,18 @@ body {
     max-width: 728px;
     margin: 0 auto;
     padding: 12px 0;
+    min-height: 50px;
+}
+
+/* Placeholder text when ad not loaded */
+.ad-container:empty::before,
+.ad-container > div:empty::before {
+    content: 'Ad';
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    opacity: 0.3;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .ad-container.start-ad {
