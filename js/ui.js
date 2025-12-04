@@ -258,9 +258,9 @@ export class UI {
 
             // Pool word sizing - scale with pool dimensions
             // Use smaller multiplier for width to keep words compact when narrow
-            const poolWordHeight = Math.max(16, Math.min(60, Math.min(poolHeight * 0.11, poolWidth * 0.075)));
-            const poolWordPadV = Math.max(1, Math.min(12, poolHeight * 0.018));
-            const poolWordPadH = Math.max(1, Math.min(6, poolWidth * 0.01));
+            const poolWordHeight = Math.max(24, Math.min(65, Math.min(poolHeight * 0.14, poolWidth * 0.095)));
+            const poolWordPadV = Math.max(4, Math.min(14, poolHeight * 0.025));
+            const poolWordPadH = Math.max(2, Math.min(8, poolWidth * 0.012));
             root.style.setProperty('--pool-word-height', `${poolWordHeight}px`);
             root.style.setProperty('--pool-word-pad-v', `${poolWordPadV}px`);
             root.style.setProperty('--pool-word-pad-h', `${poolWordPadH}px`);
