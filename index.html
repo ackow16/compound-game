@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Ezoic Privacy Scripts (must load first) -->
+    <script src="https://cmp.gatekeeperconsent.com/min.js" data-cfasync="false"></script>
+    <script src="https://the.gatekeeperconsent.com/cmp.min.js" data-cfasync="false"></script>
+    <!-- Ezoic Header Script -->
+    <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+    <script>
+        window.ezstandalone = window.ezstandalone || {};
+        ezstandalone.cmd = ezstandalone.cmd || [];
+    </script>
+    <!-- Ezoic Rewarded Ads -->
+    <script>
+        window.ezRewardedAds = window.ezRewardedAds || {};
+        window.ezRewardedAds.cmd = window.ezRewardedAds.cmd || [];
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>COMPOUND - Daily Word Chain Puzzle</title>
@@ -48,7 +63,10 @@
                     <div class="pool-inner">
                         <div class="pool-message">Arrange the words</div>
                         <div class="word-pool" id="word-pool"></div>
-                        <button id="submit-btn" class="submit-btn">Check Chain</button>
+                        <div class="button-row">
+                            <button id="hint-btn" class="hint-btn">Get Hint</button>
+                            <button id="submit-btn" class="submit-btn">Check Chain</button>
+                        </div>
                     </div>
                 </div>
                 <div id="feedback-message" class="feedback-message"></div>
@@ -61,6 +79,11 @@
         </footer>
     </div>
 
+    <!-- Ezoic Footer Ad -->
+    <div class="ad-container footer-ad">
+        <div id="ezoic-pub-ad-placeholder-102"></div>
+    </div>
+
     <!-- Start Screen -->
     <div class="start-overlay" id="start-overlay">
         <div class="start-content">
@@ -68,6 +91,10 @@
             <p class="start-subtitle">Daily Word Chain Puzzle</p>
             <div class="start-description">
                 <p>Arrange 16 words around the board to form a continuous chain of compound words.</p>
+            </div>
+            <!-- Ezoic Start Screen Ad -->
+            <div class="ad-container start-ad">
+                <div id="ezoic-pub-ad-placeholder-101"></div>
             </div>
             <button class="start-btn" id="start-btn">Play</button>
             <p class="start-date" id="start-date"></p>
@@ -173,5 +200,11 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script>lucide.createIcons();</script>
     <script type="module" src="js/app.js?v=14"></script>
+    <!-- Ezoic Ad Display -->
+    <script>
+        ezstandalone.cmd.push(function() {
+            ezstandalone.showAds(101, 102);
+        });
+    </script>
 </body>
 </html>

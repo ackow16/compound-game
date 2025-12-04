@@ -115,4 +115,100 @@ export class Game {
             return newValidPairSlots.size > 0 ? 'progress' : 'incorrect';
         }
     }
+
+    // Get hint - reveals 4 correct words
+    getHint() {
+        if (this.gameState !== 'playing') return null;
+
+        const solution = dailyPuzzle.getSolutionForDisplay();
+        if (!solution || solution.length !== 16) return null;
+
+        // Find slots that need help (empty or have wrong word)
+        const needsHelp = (slotIndex) => {
+            const currentWord = this.slots[slotIndex];
+            const correctWord = solution[slotIndex];
+            return currentWord !== correctWord;
+        };
+
+        // Priority 1: Corner slots (0, 4, 8, 12)
+        const corners = [0, 4, 8, 12];
+        const cornersNeedingHelp = corners.filter(needsHelp);
+
+        let slotsToFill = [];
+
+        if (cornersNeedingHelp.length >= 4) {
+            // Fill 4 corners that need help
+            slotsToFill = cornersNeedingHelp.slice(0, 4);
+        } else if (cornersNeedingHelp.length > 0) {
+            // Fill remaining corners plus some consecutive slots
+            slotsToFill = [...cornersNeedingHelp];
+
+            // Find consecutive slots that need help to fill remaining
+            for (let i = 0; i < 16 && slotsToFill.length < 4; i++) {
+                if (needsHelp(i) && !slotsToFill.includes(i)) {
+                    slotsToFill.push(i);
+                }
+            }
+        } else {
+            // All corners correct - find 4 consecutive slots that need help
+            for (let start = 0; start < 16; start++) {
+                let found = [];
+                for (let i = 0; i < 4; i++) {
+                    const idx = (start + i) % 16;
+                    if (needsHelp(idx)) {
+                        found.push(idx);
+                    }
+                }
+                if (found.length > slotsToFill.length) {
+                    slotsToFill = found;
+                }
+                if (slotsToFill.length >= 4) break;
+            }
+
+            // If we couldn't find 4 consecutive, just find any 4
+            if (slotsToFill.length < 4) {
+                slotsToFill = [];
+                for (let i = 0; i < 16 && slotsToFill.length < 4; i++) {
+                    if (needsHelp(i)) {
+                        slotsToFill.push(i);
+                    }
+                }
+            }
+        }
+
+        // If nothing needs help, return null
+        if (slotsToFill.length === 0) return null;
+
+        // Place the correct words
+        const changes = [];
+        for (const slotIndex of slotsToFill) {
+            const correctWord = solution[slotIndex];
+            const currentWord = this.slots[slotIndex];
+
+            // If slot has a word, return it to pool
+            if (currentWord && currentWord !== correctWord) {
+                if (!this.pool.includes(currentWord)) {
+                    this.pool.push(currentWord);
+                }
+            }
+
+            // If correct word is elsewhere, remove it from there
+            const oldIndex = this.slots.indexOf(correctWord);
+            if (oldIndex > -1 && oldIndex !== slotIndex) {
+                this.slots[oldIndex] = null;
+            }
+
+            // Remove from pool if it's there
+            const poolIndex = this.pool.indexOf(correctWord);
+            if (poolIndex > -1) {
+                this.pool.splice(poolIndex, 1);
+            }
+
+            // Place the correct word
+            this.slots[slotIndex] = correctWord;
+            changes.push({ slot: slotIndex, word: correctWord });
+        }
+
+        return changes;
+    }
 }

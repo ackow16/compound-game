@@ -8,6 +8,7 @@ export class UI {
         this.slotsLayer = document.getElementById('slots-layer');
         this.wordPool = document.getElementById('word-pool');
         this.submitBtn = document.getElementById('submit-btn');
+        this.hintBtn = document.getElementById('hint-btn');
         this.feedbackMessage = document.getElementById('feedback-message');
         this.livesContainer = document.getElementById('lives-container');
         this.ringContainer = document.getElementById('ring-container');
@@ -654,6 +655,13 @@ export class UI {
             this.render();
         });
 
+        // Hint button
+        if (this.hintBtn) {
+            this.hintBtn.addEventListener('click', () => {
+                this.useHint();
+            });
+        }
+
         // Modal close
         document.getElementById('close-modal-btn').addEventListener('click', () => {
             this.modalOverlay.classList.add('hidden');
@@ -690,6 +698,70 @@ export class UI {
         // Prevent context menu during drag
         document.addEventListener('contextmenu', (e) => {
             if (this.isDragging) e.preventDefault();
+        });
+    }
+
+    useHint() {
+        if (this.game.gameState !== 'playing') return;
+
+        // Check if rewarded ads are available
+        if (window.ezRewardedAds && window.ezRewardedAds.ready) {
+            // Use rewarded ad with overlay
+            window.ezRewardedAds.requestWithOverlay(
+                () => {
+                    // This callback is called when reward is granted
+                    this.grantHint();
+                },
+                {
+                    header: 'Get a Hint',
+                    body: ['Watch a short ad to reveal 4 correct words.'],
+                    accept: 'Watch Ad',
+                    cancel: 'No Thanks'
+                },
+                {
+                    rewardName: 'Compound Game Hint',
+                    rewardOnNoFill: true // Still grant hint if no ad available
+                }
+            );
+        } else {
+            // Fallback: give hint directly if rewarded ads not ready
+            this.grantHint();
+        }
+    }
+
+    grantHint() {
+        const changes = this.game.getHint();
+
+        if (!changes || changes.length === 0) {
+            // All slots already correct
+            this.feedbackMessage.textContent = 'No hints needed!';
+            this.feedbackMessage.className = 'feedback-message success';
+            setTimeout(() => {
+                this.feedbackMessage.textContent = '';
+                this.feedbackMessage.className = 'feedback-message';
+            }, 2000);
+            return;
+        }
+
+        // Show feedback
+        this.feedbackMessage.textContent = `Revealed ${changes.length} words`;
+        this.feedbackMessage.className = 'feedback-message success';
+        setTimeout(() => {
+            this.feedbackMessage.textContent = '';
+            this.feedbackMessage.className = 'feedback-message';
+        }, 2000);
+
+        // Re-render
+        this.render();
+
+        // Add pop animation to the revealed slots
+        const slotEls = this.slotsLayer.querySelectorAll('.slot');
+        changes.forEach(change => {
+            const slotEl = slotEls[change.slot];
+            if (slotEl) {
+                slotEl.classList.add('pop');
+                setTimeout(() => slotEl.classList.remove('pop'), 200);
+            }
         });
     }
 
