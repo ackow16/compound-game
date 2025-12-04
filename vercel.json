@@ -1,5 +1,8 @@
 {
   "rewrites": [
     { "source": "/api/puzzle", "destination": "/api/puzzle" }
+  ],
+  "redirects": [
+    { "source": "/ads.txt", "destination": "https://srv.adstxtmanager.com/19390/playcompound.com", "statusCode": 301 }
   ]
 }
