@@ -416,26 +416,10 @@ export class UI {
                 el.classList.add('empty');
             }
 
-            if (this.isSlotInSolvedSide(index)) {
+            if (this.game.validPairSlots.has(index)) {
                 el.classList.add('correct-side');
             }
         });
-    }
-
-    isSlotInSolvedSide(index) {
-        const sides = {
-            top: [0, 1, 2, 3, 4],
-            right: [4, 5, 6, 7, 8],
-            bottom: [8, 9, 10, 11, 12],
-            left: [12, 13, 14, 15, 0]
-        };
-
-        for (const [side, indices] of Object.entries(sides)) {
-            if (this.game.solvedSides[side] && indices.includes(index)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     renderLives() {
@@ -779,7 +763,7 @@ export class UI {
     renderStats() {
         const statsSummary = document.getElementById('stats-summary');
         const livesUsed = 3 - this.game.lives;
-        const sidesComplete = Object.values(this.game.solvedSides).filter(Boolean).length;
+        const validPairsCount = this.countValidPairs();
 
         statsSummary.innerHTML = `
             <div class="stat-item">
@@ -791,28 +775,37 @@ export class UI {
                 <div class="stat-label">Attempts</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">${sidesComplete}/4</div>
-                <div class="stat-label">Sides</div>
+                <div class="stat-value">${validPairsCount}/16</div>
+                <div class="stat-label">Pairs</div>
             </div>
         `;
     }
 
+    countValidPairs() {
+        let count = 0;
+        for (let i = 0; i < 16; i++) {
+            const nextIdx = (i + 1) % 16;
+            if (this.game.validPairs.has(`${this.game.slots[i]}+${this.game.slots[nextIdx]}`) ||
+                this.game.validPairs.has(`${this.game.slots[nextIdx]}+${this.game.slots[i]}`)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     async shareResult() {
         const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        const sidesComplete = Object.values(this.game.solvedSides).filter(Boolean).length;
-
-        const sides = ['top', 'right', 'bottom', 'left'];
-        const boxes = sides.map(side => this.game.solvedSides[side] ? '\u2588' : '\u2591');
+        const validPairsCount = this.countValidPairs();
 
         let resultText = `COMPOUND ${date}\n`;
 
         if (this.game.gameState === 'won') {
             resultText += `Solved in ${this.formatTime(this.elapsedTime)}\n`;
         } else {
-            resultText += `${sidesComplete}/4 sides\n`;
+            resultText += `${validPairsCount}/16 pairs\n`;
         }
 
-        resultText += boxes.join('') + '\n\n';
+        resultText += '\n';
         resultText += 'Play free at playcompound.com';
 
         const shareBtn = document.getElementById('share-btn');

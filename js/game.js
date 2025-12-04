@@ -7,12 +7,7 @@ export class Game {
         this.validPairs = dailyPuzzle.getValidPairs();
         this.lives = 3;
         this.gameState = 'playing'; // 'playing', 'won', 'lost'
-        this.solvedSides = {
-            top: false,
-            right: false,
-            bottom: false,
-            left: false
-        };
+        this.validPairSlots = new Set(); // Slots that are part of a valid adjacent pair
         this.lastSubmittedSlots = JSON.stringify(this.slots); // Track last submission to prevent duplicates
     }
 
@@ -87,41 +82,27 @@ export class Game {
         this.lastSubmittedSlots = currentSlotsStr;
         console.log('Processing actual guess, will decrement lives if wrong');
 
-        // Define sides by indices
-        // Top: 0-4
-        // Right: 4-8
-        // Bottom: 8-12
-        // Left: 12-15, 0
-        const sides = {
-            top: [0, 1, 2, 3, 4],
-            right: [4, 5, 6, 7, 8],
-            bottom: [8, 9, 10, 11, 12],
-            left: [12, 13, 14, 15, 0]
-        };
+        // Check all 16 adjacent pairs around the ring
+        // Pairs: 0-1, 1-2, 2-3, ... 14-15, 15-0
+        const newValidPairSlots = new Set();
+        let validPairCount = 0;
 
-        let anySideCorrect = false;
-        let allSidesCorrect = true;
-
-        for (const [sideName, indices] of Object.entries(sides)) {
-            let sideValid = true;
-            for (let i = 0; i < indices.length - 1; i++) {
-                const idxA = indices[i];
-                const idxB = indices[i + 1];
-                if (!this.checkPair(this.slots[idxA], this.slots[idxB])) {
-                    sideValid = false;
-                    break;
-                }
-            }
-
-            if (sideValid) {
-                this.solvedSides[sideName] = true;
-                anySideCorrect = true;
-            } else {
-                allSidesCorrect = false;
+        for (let i = 0; i < 16; i++) {
+            const nextIdx = (i + 1) % 16;
+            if (this.checkPair(this.slots[i], this.slots[nextIdx])) {
+                newValidPairSlots.add(i);
+                newValidPairSlots.add(nextIdx);
+                validPairCount++;
             }
         }
 
-        if (allSidesCorrect) {
+        // Check if we made progress (found new valid pairs)
+        const hadValidPairs = this.validPairSlots.size > 0;
+        const hasMoreValidPairs = newValidPairSlots.size > this.validPairSlots.size;
+        this.validPairSlots = newValidPairSlots;
+
+        // Win if all 16 pairs are valid
+        if (validPairCount === 16) {
             this.gameState = 'won';
             return 'won';
         } else {
@@ -130,7 +111,8 @@ export class Game {
                 this.gameState = 'lost';
                 return 'lost';
             }
-            return anySideCorrect ? 'progress' : 'incorrect';
+            // Progress if we have any valid pairs
+            return newValidPairSlots.size > 0 ? 'progress' : 'incorrect';
         }
     }
 }
