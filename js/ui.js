@@ -489,6 +489,15 @@ export class UI {
         // Start physics loop
         this.startPhysicsLoop();
 
+        // Capture pointer to ensure we receive all events (important for mobile)
+        if (element.setPointerCapture) {
+            element.setPointerCapture(e.pointerId);
+        }
+        this.currentPointerId = e.pointerId;
+
+        // Prevent page scrolling during drag
+        document.body.classList.add('dragging');
+
         // Event listeners
         const onMove = (moveEvent) => {
             this.mouseX = moveEvent.clientX;
@@ -500,10 +509,12 @@ export class UI {
             this.onDragEnd(upEvent);
             document.removeEventListener('pointermove', onMove);
             document.removeEventListener('pointerup', onUp);
+            document.removeEventListener('pointercancel', onUp);
         };
 
         document.addEventListener('pointermove', onMove);
         document.addEventListener('pointerup', onUp);
+        document.addEventListener('pointercancel', onUp);
     }
 
     createGhost(word, x, y) {
@@ -572,6 +583,19 @@ export class UI {
             cancelAnimationFrame(this.animationFrame);
         }
 
+        // Release pointer capture
+        if (this.dragElement && this.dragElement.releasePointerCapture && this.currentPointerId) {
+            try {
+                this.dragElement.releasePointerCapture(this.currentPointerId);
+            } catch (ex) {
+                // Pointer may already be released
+            }
+        }
+        this.currentPointerId = null;
+
+        // Re-enable page scrolling
+        document.body.classList.remove('dragging');
+
         // Remove ghost with animation
         if (this.ghostElement) {
             this.ghostElement.style.transition = 'all 0.15s ease-out';
@@ -625,6 +649,13 @@ export class UI {
     // ==================== Event Listeners ====================
 
     setupEventListeners() {
+        // Safety cleanup for stuck drag states (mobile fallback)
+        document.addEventListener('touchend', () => {
+            if (this.isDragging) {
+                this.onDragEnd({ clientX: this.mouseX, clientY: this.mouseY });
+            }
+        }, { passive: true });
+
         // Start button
         if (this.startBtn) {
             this.startBtn.addEventListener('click', () => {
