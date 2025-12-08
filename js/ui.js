@@ -1,4 +1,4 @@
-import { dailyPuzzle } from './data.js?v=14';
+import { dailyPuzzle } from './data.js?v=15';
 
 export class UI {
     constructor(game) {
@@ -183,6 +183,9 @@ export class UI {
             const availableHeight = viewportHeight - headerHeight - footerHeight - verticalPadding;
             const availableWidth = viewportWidth - (2 * edgeMargin);
 
+            // Mobile detection for larger touch targets
+            const isMobile = viewportWidth < 600;
+
             // ========== DYNAMIC ASPECT RATIO ==========
             // Wider screens get wider rings (0.68), narrow screens get taller (up to 1.15)
             const screenRatio = availableWidth / availableHeight;
@@ -206,19 +209,23 @@ export class UI {
                 ringWidth = ringHeight / aspectRatio;
             }
 
-            // Minimum ring - NEVER exceed available space
-            const safeMinRing = Math.min(220, availableWidth);
+            // Minimum ring - on mobile, need larger ring to fit larger slots
+            // Allow ring to exceed viewport on mobile for better touch targets
+            const minRingForMobile = isMobile ? 300 : 220;
+            const safeMinRing = isMobile ? minRingForMobile : Math.min(220, availableWidth);
             ringWidth = Math.max(ringWidth, safeMinRing);
             ringHeight = Math.max(ringHeight, safeMinRing * aspectRatio);
 
             // ========== SLOT SIZE - PROPORTIONAL ==========
             // Width: 15-18% of ring (scales with ring size)
             const slotWidthRatio = 0.15 + (ringWidth / 800) * 0.03;
-            const slotWidth = Math.max(36, ringWidth * slotWidthRatio);
+            const minSlotWidth = isMobile ? 58 : 36;
+            const slotWidth = Math.max(minSlotWidth, ringWidth * slotWidthRatio);
 
             // Height: 11-14% of ring height
             const slotHeightRatio = 0.11 + (ringHeight / 600) * 0.03;
-            const slotHeight = Math.max(28, ringHeight * slotHeightRatio);
+            const minSlotHeight = isMobile ? 44 : 28;
+            const slotHeight = Math.max(minSlotHeight, ringHeight * slotHeightRatio);
 
             // ========== SLOT INSET - CONTINUOUS ==========
             // Use the slotInsetPercent calculated earlier for margin
@@ -258,12 +265,14 @@ export class UI {
             const poolWidthFactor = poolWidth / 160; // More sensitive to narrow pools
             const poolHeightFactor = poolHeight / 180;
             const poolFontFactor = Math.min(poolWidthFactor, poolHeightFactor, slotWidth / 80);
-            const poolFontSize = Math.max(0.4, Math.min(1.1, 0.4 + poolFontFactor * 0.6));
+            const minPoolFontSize = isMobile ? 0.65 : 0.4;
+            const poolFontSize = Math.max(minPoolFontSize, Math.min(1.1, 0.4 + poolFontFactor * 0.6));
             root.style.setProperty('--pool-font-size', `${poolFontSize}rem`);
 
             // Pool word sizing - scale with pool dimensions
             // Use smaller multiplier for width to keep words compact when narrow
-            const poolWordHeight = Math.max(24, Math.min(65, Math.min(poolHeight * 0.14, poolWidth * 0.095)));
+            const minPoolWordHeight = isMobile ? 44 : 24;
+            const poolWordHeight = Math.max(minPoolWordHeight, Math.min(65, Math.min(poolHeight * 0.14, poolWidth * 0.095)));
             const poolWordPadV = Math.max(4, Math.min(14, poolHeight * 0.025));
             const poolWordPadH = Math.max(2, Math.min(8, poolWidth * 0.012));
             root.style.setProperty('--pool-word-height', `${poolWordHeight}px`);

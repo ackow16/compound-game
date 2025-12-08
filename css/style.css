@@ -856,10 +856,22 @@ body.dragging {
 
 /* Responsive - Mobile (style only, JS handles sizing) */
 @media (max-width: 600px) {
-    /* No :root size overrides - JS handles all dimensions */
+    /* Minimum touch target sizes for mobile - JS calculates larger values but these are fallbacks */
+    .slot {
+        min-width: 58px;
+        min-height: 44px;
+    }
+
+    .pool-word {
+        min-height: 44px;
+    }
+
+    .submit-btn, .hint-btn {
+        min-height: 48px;
+    }
 
     .game-board {
-        min-height: 240px; /* Prevent collapse on short viewports */
+        min-height: 300px; /* Larger minimum for mobile */
     }
 
     /* Style adjustments only */
