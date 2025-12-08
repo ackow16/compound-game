@@ -743,30 +743,8 @@ export class UI {
 
     useHint() {
         if (this.game.gameState !== 'playing') return;
-
-        // Check if rewarded ads are available
-        if (window.ezRewardedAds && window.ezRewardedAds.ready) {
-            // Use rewarded ad with overlay
-            window.ezRewardedAds.requestWithOverlay(
-                () => {
-                    // This callback is called when reward is granted
-                    this.grantHint();
-                },
-                {
-                    header: 'Get a Hint',
-                    body: ['Watch a short ad to reveal 4 correct words.'],
-                    accept: 'Watch Ad',
-                    cancel: 'No Thanks'
-                },
-                {
-                    rewardName: 'Compound Game Hint',
-                    rewardOnNoFill: true // Still grant hint if no ad available
-                }
-            );
-        } else {
-            // Fallback: give hint directly if rewarded ads not ready
-            this.grantHint();
-        }
+        // Give hint directly (no ads for now)
+        this.grantHint();
     }
 
     grantHint() {

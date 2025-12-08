@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/puzzle", "destination": "/api/puzzle" },
-    { "source": "/ads.txt", "destination": "https://srv.adstxtmanager.com/19390/playcompound.com" }
+    { "source": "/api/puzzle", "destination": "/api/puzzle" }
   ]
 }
