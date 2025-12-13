@@ -225,6 +225,12 @@ body.dragging {
     background: var(--accent-light);
     border: 2px solid transparent;
     color: var(--text-secondary);
+
+    /* Text handling - prevent awkward wrapping */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 4px;
 }
 
 .slot.empty {
@@ -330,8 +336,12 @@ body.dragging {
     min-height: var(--pool-word-height, 40px);
     text-transform: uppercase;
     letter-spacing: 0;
-    word-break: break-all;
+    /* Improved text handling - prefer single line but allow shrink */
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    /* Allow font to shrink slightly if needed */
+    font-size: clamp(0.55rem, var(--pool-font-size, 0.85rem), 1rem);
 }
 
 .pool-word:hover {
@@ -1064,6 +1074,144 @@ body.dragging {
         padding: 14px 24px;
         font-size: 0.9rem;
         border-radius: 14px;
+    }
+}
+
+/* Phone Mode (3x7 layout) - Mobile portrait orientation */
+@media (max-width: 600px) and (orientation: portrait) {
+    /* 2x8 pool grid for tall narrow center area */
+    .word-pool {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(8, auto);
+        gap: 4px;
+    }
+
+    /* Larger slots for better touch on phone */
+    .slot {
+        border-radius: 10px;
+        letter-spacing: -0.01em;
+        font-size: clamp(0.65rem, var(--slot-font-size, 0.85rem), 1.1rem);
+    }
+
+    /* Pool words - taller for 2-column layout */
+    .pool-word {
+        border-radius: 8px;
+        letter-spacing: -0.01em;
+        padding: 8px 4px;
+        min-height: 38px;
+        font-size: clamp(0.6rem, var(--pool-font-size, 0.75rem), 0.9rem);
+    }
+
+    /* Ensure pool container fits in narrow center */
+    .pool-container {
+        max-width: calc(var(--pool-width));
+    }
+
+    /* Compact button row for phone */
+    .button-row {
+        gap: 4px;
+        margin-top: 4px;
+        flex-wrap: nowrap;
+        flex-direction: column;
+    }
+
+    .submit-btn, .hint-btn {
+        padding: 8px 16px;
+        font-size: 0.7rem;
+        min-height: 36px;
+        width: 100%;
+    }
+
+    /* Hide pool message on phone */
+    .pool-message {
+        display: none;
+    }
+}
+
+/* Very narrow portrait screens */
+@media (max-width: 380px) and (orientation: portrait) {
+    .word-pool {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 3px;
+    }
+
+    .pool-word {
+        padding: 6px 3px;
+        font-size: clamp(0.55rem, var(--pool-font-size, 0.7rem), 0.85rem);
+        min-height: 34px;
+    }
+
+    .slot {
+        letter-spacing: -0.02em;
+    }
+
+    .submit-btn, .hint-btn {
+        padding: 6px 12px;
+        font-size: 0.65rem;
+        min-height: 32px;
+    }
+}
+
+/* Tablet Mode - iPad and similar (uses same square layout as desktop) */
+@media (min-width: 600px) and (max-width: 1024px) {
+    /* More padding from device edges */
+    .app-container {
+        padding: 0 60px;
+    }
+
+    /* Increase safe margin for slots */
+    :root {
+        --safe-margin: 50px;
+    }
+
+    /* Keep 4x4 pool grid for tablet */
+    .word-pool {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    /* Comfortable slot sizes */
+    .slot {
+        border-radius: 12px;
+    }
+
+    /* Pool words with good touch targets */
+    .pool-word {
+        border-radius: 10px;
+        padding: 12px 8px;
+        min-height: 48px;
+    }
+
+    /* Buttons MUST be side-by-side on tablet */
+    .button-row {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 16px;
+        margin-top: 12px;
+    }
+
+    .submit-btn, .hint-btn {
+        padding: 14px 28px;
+        font-size: 0.9rem;
+        min-height: 52px;
+    }
+
+    /* Header adjustments */
+    .game-header {
+        padding: 20px 0;
+    }
+
+    .game-title {
+        font-size: 2.5rem;
+    }
+
+    /* Pool container sizing */
+    .pool-container {
+        padding: 8px;
+    }
+
+    .pool-inner {
+        gap: 8px;
     }
 }
 

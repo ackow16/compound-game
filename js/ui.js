@@ -1,4 +1,5 @@
-import { dailyPuzzle } from './data.js?v=15';
+import { dailyPuzzle } from './data.js?v=18';
+import { WORD_COUNT } from './config.js';
 
 export class UI {
     constructor(game) {
@@ -155,6 +156,16 @@ export class UI {
             const headerHeight = header ? header.offsetHeight : 80;
             const footerHeight = footer ? footer.offsetHeight : 50;
 
+            // ========== LAYOUT MODE DETECTION ==========
+            // Two layout modes:
+            // - phone: < 600px width (tall vertical ring for portrait screens)
+            // - desktop: >= 600px width (square ring for tablet & desktop)
+            const isPhone = viewportWidth < 600;
+
+            // Store layout mode for slot positioning
+            this.layoutMode = isPhone ? 'phone' : 'desktop';
+            root.style.setProperty('--layout-mode', this.layoutMode);
+
             // ========== CALCULATE EDGE MARGIN BASED ON SLOT OVERFLOW ==========
             // First estimate ring and slot sizes to determine how much margin we need
             const estimatedRingWidth = Math.min(viewportWidth * 0.9, 800);
@@ -187,17 +198,34 @@ export class UI {
             const isMobile = viewportWidth < 600;
 
             // ========== DYNAMIC ASPECT RATIO ==========
-            // Wider screens get wider rings (0.68), narrow screens get taller (up to 1.15)
+            // Aspect ratios depend on both device and word count
+            // Phone: tall vertical rectangle, Desktop/Tablet: nearly square
             const screenRatio = availableWidth / availableHeight;
             let aspectRatio;
-            if (screenRatio < 0.5) {
-                // Very narrow: make ring taller (aspect ratio > 1 means taller than wide)
-                // At ratio 0.3 -> 1.15, at ratio 0.5 -> 0.95
-                aspectRatio = 0.95 + (0.5 - screenRatio) * 1.0;
+
+            if (isPhone) {
+                // Phone mode - tall vertical ring
+                if (WORD_COUNT === 12) {
+                    // 12-word phone: 2x5 layout - target ~2.5 (5/2)
+                    aspectRatio = Math.max(2.0, Math.min(2.8, 2.5 - (screenRatio - 0.4) * 0.3));
+                } else {
+                    // 16-word phone: 3x7 layout - target ~2.33 (7/3)
+                    if (screenRatio < 0.4) {
+                        aspectRatio = 2.0 + (0.4 - screenRatio) * 0.5;
+                    } else {
+                        aspectRatio = 2.2 - (screenRatio - 0.4) * 0.3;
+                    }
+                    aspectRatio = Math.max(1.8, Math.min(2.5, aspectRatio));
+                }
             } else {
-                // Normal range: 0.5 -> 0.95, 1.5 -> 0.68
-                const clampedRatio = Math.min(1.5, screenRatio);
-                aspectRatio = 0.95 - (clampedRatio - 0.5) * 0.27;
+                // Desktop/Tablet mode - nearly square ring
+                // Both 12-word (4x4) and 16-word (5x5) use similar square proportions
+                if (screenRatio < 0.5) {
+                    aspectRatio = 0.95 + (0.5 - screenRatio) * 1.0;
+                } else {
+                    const clampedRatio = Math.min(1.5, screenRatio);
+                    aspectRatio = 0.95 - (clampedRatio - 0.5) * 0.27;
+                }
             }
 
             // ========== RING SIZE WITH SAFETY ==========
@@ -211,20 +239,37 @@ export class UI {
 
             // Minimum ring - on mobile, need larger ring to fit larger slots
             // Allow ring to exceed viewport on mobile for better touch targets
-            const minRingForMobile = isMobile ? 300 : 220;
+            const minRingForMobile = isMobile ? 280 : 220;
             const safeMinRing = isMobile ? minRingForMobile : Math.min(220, availableWidth);
             ringWidth = Math.max(ringWidth, safeMinRing);
             ringHeight = Math.max(ringHeight, safeMinRing * aspectRatio);
 
             // ========== SLOT SIZE - PROPORTIONAL ==========
-            // Width: 15-18% of ring (scales with ring size)
-            const slotWidthRatio = 0.15 + (ringWidth / 800) * 0.03;
-            const minSlotWidth = isMobile ? 58 : 36;
-            const slotWidth = Math.max(minSlotWidth, ringWidth * slotWidthRatio);
+            // Adjust slot size based on layout mode and word count
+            let slotWidthRatio, slotHeightRatio, minSlotWidth, minSlotHeight;
 
-            // Height: 11-14% of ring height
-            const slotHeightRatio = 0.11 + (ringHeight / 600) * 0.03;
-            const minSlotHeight = isMobile ? 44 : 28;
+            if (isPhone) {
+                // Phone: tall vertical ring - wider slots, shorter height
+                if (WORD_COUNT === 12) {
+                    // 12-word: 2x5 layout - very wide slots
+                    slotWidthRatio = 0.28 + (ringWidth / 400) * 0.04;
+                    slotHeightRatio = 0.10 + (ringHeight / 800) * 0.02;
+                } else {
+                    // 16-word: 3x7 layout
+                    slotWidthRatio = 0.22 + (ringWidth / 400) * 0.03;
+                    slotHeightRatio = 0.08 + (ringHeight / 800) * 0.02;
+                }
+                minSlotWidth = 58;
+                minSlotHeight = 36;
+            } else {
+                // Desktop/Tablet: square ring - nice rectangular slots
+                slotWidthRatio = 0.15 + (ringWidth / 800) * 0.03;
+                slotHeightRatio = 0.11 + (ringHeight / 600) * 0.03;
+                minSlotWidth = isMobile ? 54 : 36;
+                minSlotHeight = isMobile ? 40 : 28;
+            }
+
+            const slotWidth = Math.max(minSlotWidth, ringWidth * slotWidthRatio);
             const slotHeight = Math.max(minSlotHeight, ringHeight * slotHeightRatio);
 
             // ========== SLOT INSET - CONTINUOUS ==========
@@ -239,13 +284,22 @@ export class UI {
             // ========== POOL SIZE ==========
             const slotOverlapH = (slotWidth / ringWidth) * 50;
             const slotOverlapV = (slotHeight / ringHeight) * 50;
-            const poolMargin = 2;
+            const poolMargin = isPhone ? 4 : 2;
 
             const availablePoolWidth = ringWidth * (1 - 2 * (slotInset + slotOverlapH + poolMargin) / 100);
             const availablePoolHeight = ringHeight * (1 - 2 * (slotInset + slotOverlapV + poolMargin) / 100);
 
-            const poolWidth = Math.max(80, availablePoolWidth * 0.95);
-            const poolHeight = Math.max(60, availablePoolHeight * 0.95);
+            let poolWidth, poolHeight;
+            if (isPhone) {
+                // Phone mode: tall narrow pool for 2-column grid
+                const maxPoolWidth = ringWidth * 0.40;
+                poolWidth = Math.max(70, Math.min(maxPoolWidth, availablePoolWidth * 0.85));
+                poolHeight = Math.max(200, availablePoolHeight * 0.90);
+            } else {
+                // Desktop/Tablet mode: balanced pool for 4-column grid
+                poolWidth = Math.max(80, availablePoolWidth * 0.95);
+                poolHeight = Math.max(60, availablePoolHeight * 0.95);
+            }
 
             // ========== SET CSS VARIABLES ==========
             root.style.setProperty('--ring-width', `${ringWidth}px`);
@@ -331,10 +385,12 @@ export class UI {
     }
 
     updateSlotPositions() {
-        // Clear existing slots
-        if (this.slotsLayer.children.length === 0) {
-            // First time - create slots
-            for (let i = 0; i < 16; i++) {
+        // Clear existing slots or create if needed
+        const currentSlotCount = this.slotsLayer.children.length;
+        if (currentSlotCount !== WORD_COUNT) {
+            // Recreate slots if count changed
+            this.slotsLayer.innerHTML = '';
+            for (let i = 0; i < WORD_COUNT; i++) {
                 const slot = document.createElement('div');
                 slot.classList.add('slot', 'empty');
                 slot.dataset.index = i;
@@ -347,25 +403,108 @@ export class UI {
         // Get inset from CSS variable (set by calculateLayout)
         const insetStr = getComputedStyle(document.documentElement).getPropertyValue('--slot-inset');
         const inset = parseFloat(insetStr) || 7; // Percentage from edge
-        const range = 100 - (2 * inset);
-        const step = range / 4; // 5 slots per side = 4 gaps
 
         const slotPositions = [];
-        // Top Row (0-4)
-        for (let i = 0; i < 5; i++) {
-            slotPositions.push({ x: inset + (i * step), y: inset });
-        }
-        // Right Col (5-8)
-        for (let i = 1; i < 5; i++) {
-            slotPositions.push({ x: 100 - inset, y: inset + (i * step) });
-        }
-        // Bottom Row (9-12)
-        for (let i = 1; i < 5; i++) {
-            slotPositions.push({ x: (100 - inset) - (i * step), y: 100 - inset });
-        }
-        // Left Col (13-15)
-        for (let i = 1; i < 4; i++) {
-            slotPositions.push({ x: inset, y: (100 - inset) - (i * step) });
+        const layoutMode = this.layoutMode || 'desktop';
+
+        if (WORD_COUNT === 12) {
+            // ========== 12-WORD LAYOUTS ==========
+            if (layoutMode === 'phone') {
+                // Phone 12-word: 2x5 layout
+                // Distribution: Top: 2, Right: 4, Bottom: 2, Left: 4 = 12 slots
+                const hRange = 100 - (2 * inset);
+                const vRange = 100 - (2 * inset);
+                const hStep = hRange / 1; // 2 slots across = 1 gap
+                const vStep = vRange / 4; // 5 slots down = 4 gaps
+
+                // Top Row (0-1): 2 slots
+                for (let i = 0; i < 2; i++) {
+                    slotPositions.push({ x: inset + (i * hStep), y: inset });
+                }
+                // Right Col (2-5): 4 slots
+                for (let i = 1; i <= 4; i++) {
+                    slotPositions.push({ x: 100 - inset, y: inset + (i * vStep) });
+                }
+                // Bottom Row (6-7): 2 slots (going left)
+                for (let i = 1; i <= 2; i++) {
+                    slotPositions.push({ x: (100 - inset) - (i * hStep), y: 100 - inset });
+                }
+                // Left Col (8-11): 4 slots (going up, skip bottom-left since it's counted)
+                for (let i = 1; i <= 4; i++) {
+                    slotPositions.push({ x: inset, y: (100 - inset) - (i * vStep) });
+                }
+            } else {
+                // Desktop/Tablet 12-word: 4x4 layout (nearly square, symmetric)
+                // Distribution: Top: 4, Right: 3, Bottom: 3, Left: 2 = 12 slots
+                const range = 100 - (2 * inset);
+                const step = range / 3; // 4 slots per side = 3 gaps
+
+                // Top Row (0-3): 4 slots
+                for (let i = 0; i < 4; i++) {
+                    slotPositions.push({ x: inset + (i * step), y: inset });
+                }
+                // Right Col (4-6): 3 slots
+                for (let i = 1; i <= 3; i++) {
+                    slotPositions.push({ x: 100 - inset, y: inset + (i * step) });
+                }
+                // Bottom Row (7-9): 3 slots (going left)
+                for (let i = 1; i <= 3; i++) {
+                    slotPositions.push({ x: (100 - inset) - (i * step), y: 100 - inset });
+                }
+                // Left Col (10-11): 2 slots (going up)
+                for (let i = 1; i <= 2; i++) {
+                    slotPositions.push({ x: inset, y: (100 - inset) - (i * step) });
+                }
+            }
+        } else {
+            // ========== 16-WORD LAYOUTS ==========
+            if (layoutMode === 'phone') {
+                // Phone 16-word: 3x7 layout
+                // Distribution: Top: 3, Right: 6, Bottom: 2, Left: 5 = 16 slots
+                const hRange = 100 - (2 * inset);
+                const vRange = 100 - (2 * inset);
+                const hStep = hRange / 2; // 3 slots across = 2 gaps
+                const vStep = vRange / 6; // 7 slots down = 6 gaps
+
+                // Top Row (0-2): 3 slots
+                for (let i = 0; i < 3; i++) {
+                    slotPositions.push({ x: inset + (i * hStep), y: inset });
+                }
+                // Right Col (3-8): 6 slots
+                for (let i = 1; i <= 6; i++) {
+                    slotPositions.push({ x: 100 - inset, y: inset + (i * vStep) });
+                }
+                // Bottom Row (9-10): 2 slots
+                for (let i = 1; i <= 2; i++) {
+                    slotPositions.push({ x: (100 - inset) - (i * hStep), y: 100 - inset });
+                }
+                // Left Col (11-15): 5 slots
+                for (let i = 1; i <= 5; i++) {
+                    slotPositions.push({ x: inset, y: (100 - inset) - (i * vStep) });
+                }
+            } else {
+                // Desktop/Tablet 16-word: 5x5 layout (square, symmetric)
+                // Distribution: Top: 5, Right: 4, Bottom: 4, Left: 3 = 16 slots
+                const range = 100 - (2 * inset);
+                const step = range / 4; // 5 slots per side = 4 gaps
+
+                // Top Row (0-4): 5 slots
+                for (let i = 0; i < 5; i++) {
+                    slotPositions.push({ x: inset + (i * step), y: inset });
+                }
+                // Right Col (5-8): 4 slots
+                for (let i = 1; i < 5; i++) {
+                    slotPositions.push({ x: 100 - inset, y: inset + (i * step) });
+                }
+                // Bottom Row (9-12): 4 slots
+                for (let i = 1; i < 5; i++) {
+                    slotPositions.push({ x: (100 - inset) - (i * step), y: 100 - inset });
+                }
+                // Left Col (13-15): 3 slots
+                for (let i = 1; i < 4; i++) {
+                    slotPositions.push({ x: inset, y: (100 - inset) - (i * step) });
+                }
+            }
         }
 
         // Apply positions
@@ -865,7 +1004,7 @@ export class UI {
                 <div class="stat-label">Attempts</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">${validPairsCount}/16</div>
+                <div class="stat-value">${validPairsCount}/${WORD_COUNT}</div>
                 <div class="stat-label">Pairs</div>
             </div>
         `;
@@ -873,8 +1012,8 @@ export class UI {
 
     countValidPairs() {
         let count = 0;
-        for (let i = 0; i < 16; i++) {
-            const nextIdx = (i + 1) % 16;
+        for (let i = 0; i < WORD_COUNT; i++) {
+            const nextIdx = (i + 1) % WORD_COUNT;
             if (this.game.validPairs.has(`${this.game.slots[i]}+${this.game.slots[nextIdx]}`) ||
                 this.game.validPairs.has(`${this.game.slots[nextIdx]}+${this.game.slots[i]}`)) {
                 count++;
@@ -892,7 +1031,7 @@ export class UI {
         if (this.game.gameState === 'won') {
             resultText += `Solved in ${this.formatTime(this.elapsedTime)}\n`;
         } else {
-            resultText += `${validPairsCount}/16 pairs\n`;
+            resultText += `${validPairsCount}/${WORD_COUNT} pairs\n`;
         }
 
         resultText += '\n';

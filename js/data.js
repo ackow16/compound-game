@@ -1,6 +1,8 @@
 // Client-side puzzle data - fetched from server
 // The solution order is NEVER available on the client
 
+import { WORD_COUNT } from './config.js';
+
 let puzzleData = null;
 
 export const dailyPuzzle = {
@@ -27,7 +29,12 @@ export const dailyPuzzle = {
 
     _getFallbackPuzzle() {
         // Only used for local testing - in production, API provides this
-        const words = ["ROOM", "MATE", "SHIP", "YARD", "STICK", "UP", "BEAT", "DOWN", "FALL", "OUT", "BREAK", "FAST", "BALL", "POINT", "BLANK", "SUN"];
+        // 16-word chain
+        const words16 = ["ROOM", "MATE", "SHIP", "YARD", "STICK", "UP", "BEAT", "DOWN", "FALL", "OUT", "BREAK", "FAST", "BALL", "POINT", "BLANK", "SUN"];
+        // 12-word chain
+        const words12 = ["SUN", "LIGHT", "HOUSE", "WORK", "SHOP", "LIFT", "OFF", "HAND", "MADE", "UP", "BEAT", "DOWN"];
+
+        const words = WORD_COUNT === 12 ? words12 : words16;
         const pairs = [];
         for (let i = 0; i < words.length; i++) {
             pairs.push(`${words[i]}+${words[(i + 1) % words.length]}`);
@@ -79,7 +86,7 @@ export const dailyPuzzle = {
         let current = words[0];
         const solution = [current];
 
-        while (solution.length < 16) {
+        while (solution.length < WORD_COUNT) {
             const next = pairMap.get(current);
             if (!next || solution.includes(next)) break;
             solution.push(next);

@@ -1,8 +1,9 @@
-import { dailyPuzzle } from './data.js?v=15';
+import { dailyPuzzle } from './data.js?v=18';
+import { WORD_COUNT } from './config.js';
 
 export class Game {
     constructor() {
-        this.slots = new Array(16).fill(null); // Array of strings or null
+        this.slots = new Array(WORD_COUNT).fill(null); // Array of strings or null
         this.pool = dailyPuzzle.getJumbledWords();
         this.validPairs = dailyPuzzle.getValidPairs();
         this.lives = 3;
@@ -82,13 +83,13 @@ export class Game {
         this.lastSubmittedSlots = currentSlotsStr;
         console.log('Processing actual guess, will decrement lives if wrong');
 
-        // Check all 16 adjacent pairs around the ring
-        // Pairs: 0-1, 1-2, 2-3, ... 14-15, 15-0
+        // Check all adjacent pairs around the ring
+        // Pairs: 0-1, 1-2, 2-3, ... (WORD_COUNT-2)-(WORD_COUNT-1), (WORD_COUNT-1)-0
         const newValidPairSlots = new Set();
         let validPairCount = 0;
 
-        for (let i = 0; i < 16; i++) {
-            const nextIdx = (i + 1) % 16;
+        for (let i = 0; i < WORD_COUNT; i++) {
+            const nextIdx = (i + 1) % WORD_COUNT;
             if (this.checkPair(this.slots[i], this.slots[nextIdx])) {
                 newValidPairSlots.add(i);
                 newValidPairSlots.add(nextIdx);
@@ -101,8 +102,8 @@ export class Game {
         const hasMoreValidPairs = newValidPairSlots.size > this.validPairSlots.size;
         this.validPairSlots = newValidPairSlots;
 
-        // Win if all 16 pairs are valid
-        if (validPairCount === 16) {
+        // Win if all pairs are valid
+        if (validPairCount === WORD_COUNT) {
             this.gameState = 'won';
             return 'won';
         } else {
@@ -116,12 +117,15 @@ export class Game {
         }
     }
 
-    // Get hint - reveals 4 correct words
+    // Get hint - reveals some correct words (scaled to word count)
     getHint() {
         if (this.gameState !== 'playing') return null;
 
         const solution = dailyPuzzle.getSolutionForDisplay();
-        if (!solution || solution.length !== 16) return null;
+        if (!solution || solution.length !== WORD_COUNT) return null;
+
+        // Number of words to reveal (4 for 16-word, 3 for 12-word)
+        const revealCount = WORD_COUNT === 12 ? 3 : 4;
 
         // Find slots that need help (empty or have wrong word)
         const needsHelp = (slotIndex) => {
@@ -130,31 +134,32 @@ export class Game {
             return currentWord !== correctWord;
         };
 
-        // Priority 1: Corner slots (0, 4, 8, 12)
-        const corners = [0, 4, 8, 12];
+        // Priority 1: Corner slots (evenly distributed around the ring)
+        const cornerSpacing = Math.floor(WORD_COUNT / 4);
+        const corners = [0, cornerSpacing, cornerSpacing * 2, cornerSpacing * 3].filter(i => i < WORD_COUNT);
         const cornersNeedingHelp = corners.filter(needsHelp);
 
         let slotsToFill = [];
 
-        if (cornersNeedingHelp.length >= 4) {
-            // Fill 4 corners that need help
-            slotsToFill = cornersNeedingHelp.slice(0, 4);
+        if (cornersNeedingHelp.length >= revealCount) {
+            // Fill corners that need help
+            slotsToFill = cornersNeedingHelp.slice(0, revealCount);
         } else if (cornersNeedingHelp.length > 0) {
             // Fill remaining corners plus some consecutive slots
             slotsToFill = [...cornersNeedingHelp];
 
             // Find consecutive slots that need help to fill remaining
-            for (let i = 0; i < 16 && slotsToFill.length < 4; i++) {
+            for (let i = 0; i < WORD_COUNT && slotsToFill.length < revealCount; i++) {
                 if (needsHelp(i) && !slotsToFill.includes(i)) {
                     slotsToFill.push(i);
                 }
             }
         } else {
-            // All corners correct - find 4 consecutive slots that need help
-            for (let start = 0; start < 16; start++) {
+            // All corners correct - find consecutive slots that need help
+            for (let start = 0; start < WORD_COUNT; start++) {
                 let found = [];
-                for (let i = 0; i < 4; i++) {
-                    const idx = (start + i) % 16;
+                for (let i = 0; i < revealCount; i++) {
+                    const idx = (start + i) % WORD_COUNT;
                     if (needsHelp(idx)) {
                         found.push(idx);
                     }
@@ -162,13 +167,13 @@ export class Game {
                 if (found.length > slotsToFill.length) {
                     slotsToFill = found;
                 }
-                if (slotsToFill.length >= 4) break;
+                if (slotsToFill.length >= revealCount) break;
             }
 
-            // If we couldn't find 4 consecutive, just find any 4
-            if (slotsToFill.length < 4) {
+            // If we couldn't find enough consecutive, just find any
+            if (slotsToFill.length < revealCount) {
                 slotsToFill = [];
-                for (let i = 0; i < 16 && slotsToFill.length < 4; i++) {
+                for (let i = 0; i < WORD_COUNT && slotsToFill.length < revealCount; i++) {
                     if (needsHelp(i)) {
                         slotsToFill.push(i);
                     }
