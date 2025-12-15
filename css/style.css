@@ -169,7 +169,8 @@ body.dragging {
     align-items: center;
     position: relative;
     padding: 0;
-    min-height: 320px; /* Prevent collapse on short viewports */
+    min-height: 320px;
+    /* Prevent collapse on short viewports */
 }
 
 .ring-container {
@@ -378,6 +379,7 @@ body.dragging {
 .btn-short {
     display: none;
 }
+
 .btn-full {
     display: inline;
 }
@@ -899,6 +901,7 @@ body.dragging {
 
 /* Responsive - Mobile (style only, JS handles sizing) */
 @media (max-width: 600px) {
+
     /* Minimum touch target sizes for mobile - JS calculates larger values but these are fallbacks */
     .slot {
         min-width: 58px;
@@ -909,12 +912,14 @@ body.dragging {
         min-height: 44px;
     }
 
-    .submit-btn, .hint-btn {
+    .submit-btn,
+    .hint-btn {
         min-height: 48px;
     }
 
     .game-board {
-        min-height: 300px; /* Larger minimum for mobile */
+        min-height: 300px;
+        /* Larger minimum for mobile */
     }
 
     /* Style adjustments only */
@@ -1112,6 +1117,7 @@ body.dragging {
 
 /* Phone Mode (3x7 layout) - Mobile portrait orientation */
 @media (max-width: 600px) and (orientation: portrait) {
+
     /* Extra top padding for notched devices */
     .game-header {
         padding-top: max(16px, env(safe-area-inset-top));
@@ -1149,30 +1155,41 @@ body.dragging {
     /* Compact side-by-side buttons on phone */
     .button-row {
         gap: 8px;
-        margin-top: 4px;
+        margin-top: 8px;
+        /* Increased margin to prevent overlap */
         flex-wrap: nowrap;
         flex-direction: row;
+        align-items: center;
+        /* Ensure vertical alignment */
+        justify-content: center;
     }
 
     .button-row .hint-btn,
     .button-row .submit-btn {
         padding: 0 12px;
         font-size: 0.75rem;
-        height: 34px;
+        height: 40px;
+        /* Standardized taller height for both */
         width: calc((var(--pool-width) - 24px) / 2);
         flex: none;
         border: 1.5px solid var(--accent-primary);
         box-sizing: border-box;
+        /* Critical for alignment */
         box-shadow: none;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin: 0;
+        /* Remove any default margins */
+        line-height: 1;
+        /* Normalize line height */
     }
 
     /* Show short text on mobile */
     .btn-short {
         display: inline;
     }
+
     .btn-full {
         display: none;
     }
@@ -1208,7 +1225,8 @@ body.dragging {
         font-size: clamp(0.65rem, var(--slot-font-size, 0.8rem), 1rem);
     }
 
-    .submit-btn, .hint-btn {
+    .submit-btn,
+    .hint-btn {
         padding: 8px 10px;
         font-size: 0.7rem;
         min-height: 36px;
@@ -1217,6 +1235,7 @@ body.dragging {
 
 /* Tablet Mode - iPad and similar (uses same square layout as desktop) */
 @media (min-width: 600px) and (max-width: 1024px) {
+
     /* More padding from device edges */
     .app-container {
         padding: 0 60px;
@@ -1253,7 +1272,8 @@ body.dragging {
         margin-top: 12px;
     }
 
-    .submit-btn, .hint-btn {
+    .submit-btn,
+    .hint-btn {
         padding: 14px 28px;
         font-size: 0.9rem;
         min-height: 52px;
@@ -1299,8 +1319,15 @@ body.dragging {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .tutorial-title {
@@ -1346,7 +1373,7 @@ body.dragging {
     font-weight: 700;
     font-size: 0.9rem;
     text-transform: uppercase;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: var(--shadow-rest);
 }
 
@@ -1358,8 +1385,15 @@ body.dragging {
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .example-arrow {
@@ -1399,7 +1433,7 @@ body.dragging {
 .demo-pool {
     width: 80px;
     height: 80px;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255, 255, 255, 0.5);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -1413,14 +1447,22 @@ body.dragging {
     font-weight: 700;
     font-size: 0.85rem;
     text-transform: uppercase;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: var(--shadow-rest);
     animation: dragDemo 2s ease-in-out infinite;
 }
 
 @keyframes dragDemo {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(60px); opacity: 0.7; }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(60px);
+        opacity: 0.7;
+    }
 }
 
 .demo-arrow-container {
@@ -1468,13 +1510,32 @@ body.dragging {
     font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.preview-slot.top { top: 8px; left: 50%; transform: translateX(-50%); }
-.preview-slot.right { right: 8px; top: 50%; transform: translateY(-50%); }
-.preview-slot.bottom { bottom: 8px; left: 50%; transform: translateX(-50%); }
-.preview-slot.left { left: 8px; top: 50%; transform: translateY(-50%); }
+.preview-slot.top {
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.preview-slot.right {
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.preview-slot.bottom {
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.preview-slot.left {
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
 .preview-slot.correct {
     background: var(--success-bg);
@@ -1516,6 +1577,7 @@ body.dragging {
 
 /* Very small screens */
 @media (max-width: 380px) {
+
     /* Let JS handle dynamic sizing - only set non-size styles */
     .game-title {
         font-size: 1.5rem;

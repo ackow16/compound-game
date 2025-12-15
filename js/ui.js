@@ -207,15 +207,17 @@ export class UI {
                 // Phone mode - tall vertical ring
                 if (WORD_COUNT === 12) {
                     // 12-word phone: 2x5 layout - target ~2.5 (5/2)
-                    aspectRatio = Math.max(2.0, Math.min(2.8, 2.5 - (screenRatio - 0.4) * 0.3));
+                    // Increased max ratio to 3.2 for taller rings on modern phones
+                    aspectRatio = Math.max(2.2, Math.min(3.2, 2.8 - (screenRatio - 0.4) * 0.3));
                 } else {
                     // 16-word phone: 3x7 layout - target ~2.33 (7/3)
                     if (screenRatio < 0.4) {
-                        aspectRatio = 2.0 + (0.4 - screenRatio) * 0.5;
+                        aspectRatio = 2.2 + (0.4 - screenRatio) * 0.6;
                     } else {
-                        aspectRatio = 2.2 - (screenRatio - 0.4) * 0.3;
+                        aspectRatio = 2.4 - (screenRatio - 0.4) * 0.3;
                     }
-                    aspectRatio = Math.max(1.8, Math.min(2.5, aspectRatio));
+                    // Increased max from 2.5 to 3.0 for better spacing
+                    aspectRatio = Math.max(2.0, Math.min(3.0, aspectRatio));
                 }
             } else {
                 // Desktop/Tablet mode - nearly square ring
