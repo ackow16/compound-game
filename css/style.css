@@ -63,9 +63,16 @@ body {
 
 body.dragging {
     overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
+    touch-action: none;
+}
+
+/* Only use position:fixed on desktop to prevent scroll issues on mobile */
+@media (min-width: 601px) {
+    body.dragging {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .app-container {
@@ -1134,7 +1141,7 @@ body.dragging {
     .slot {
         border-radius: 10px;
         letter-spacing: -0.01em;
-        font-size: clamp(0.7rem, var(--slot-font-size, 0.9rem), 1.15rem);
+        font-size: clamp(0.8rem, var(--slot-font-size, 1rem), 1.25rem);
     }
 
     /* Pool words - larger text and better spacing */
@@ -1155,12 +1162,10 @@ body.dragging {
     /* Compact side-by-side buttons on phone */
     .button-row {
         gap: 8px;
-        margin-top: 8px;
-        /* Increased margin to prevent overlap */
+        margin-top: 4px;
         flex-wrap: nowrap;
         flex-direction: row;
         align-items: center;
-        /* Ensure vertical alignment */
         justify-content: center;
     }
 
