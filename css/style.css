@@ -1152,22 +1152,15 @@ body.dragging {
         top: 48%;
     }
 
-    /* Fixed height pool inner so buttons stay in place */
-    .pool-inner {
-        position: relative;
-        min-height: var(--pool-height);
-    }
-
-    /* Compact side-by-side buttons on phone - fixed at bottom */
+    /* Compact side-by-side buttons on phone */
     .button-row {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
         gap: 8px;
+        margin-top: 8px;
+        /* Increased margin to prevent overlap */
         flex-wrap: nowrap;
         flex-direction: row;
         align-items: center;
+        /* Ensure vertical alignment */
         justify-content: center;
     }
 
