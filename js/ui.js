@@ -1,4 +1,4 @@
-import { dailyPuzzle } from './data.js?v=18';
+import { dailyPuzzle } from './data.js?v=28';
 import { WORD_COUNT } from './config.js';
 
 export class UI {
@@ -249,18 +249,18 @@ export class UI {
             let slotWidthRatio, slotHeightRatio, minSlotWidth, minSlotHeight;
 
             if (isPhone) {
-                // Phone: tall vertical ring - wider slots, shorter height
+                // Phone: tall vertical ring - slots around perimeter
                 if (WORD_COUNT === 12) {
                     // 12-word: 2x5 layout - very wide slots
                     slotWidthRatio = 0.28 + (ringWidth / 400) * 0.04;
                     slotHeightRatio = 0.10 + (ringHeight / 800) * 0.02;
                 } else {
-                    // 16-word: 3x7 layout
-                    slotWidthRatio = 0.22 + (ringWidth / 400) * 0.03;
-                    slotHeightRatio = 0.08 + (ringHeight / 800) * 0.02;
+                    // 16-word: 3x7 layout - slightly smaller to give pool more room
+                    slotWidthRatio = 0.24 + (ringWidth / 400) * 0.03;
+                    slotHeightRatio = 0.075 + (ringHeight / 800) * 0.02;
                 }
-                minSlotWidth = 58;
-                minSlotHeight = 36;
+                minSlotWidth = 62;
+                minSlotHeight = 34;
             } else {
                 // Desktop/Tablet: square ring - nice rectangular slots
                 slotWidthRatio = 0.15 + (ringWidth / 800) * 0.03;
@@ -277,9 +277,11 @@ export class UI {
             const slotInset = slotInsetPercent;
             root.style.setProperty('--slot-inset', slotInset);
 
-            // Arrow inset - positioned just inside the slot area
-            const arrowInset = slotInset + (slotWidth / ringWidth) * 50 + 2;
-            root.style.setProperty('--arrow-inset', `${arrowInset}%`);
+            // Arrow insets - separate X and Y for non-square layouts (3x7 phone)
+            const arrowInsetX = slotInset + (slotWidth / ringWidth) * 50 + 2;
+            const arrowInsetY = slotInset + (slotHeight / ringHeight) * 50 + 2;
+            root.style.setProperty('--arrow-inset-x', `${arrowInsetX}%`);
+            root.style.setProperty('--arrow-inset-y', `${arrowInsetY}%`);
 
             // ========== POOL SIZE ==========
             const slotOverlapH = (slotWidth / ringWidth) * 50;
@@ -291,10 +293,10 @@ export class UI {
 
             let poolWidth, poolHeight;
             if (isPhone) {
-                // Phone mode: tall narrow pool for 2-column grid
-                const maxPoolWidth = ringWidth * 0.40;
-                poolWidth = Math.max(70, Math.min(maxPoolWidth, availablePoolWidth * 0.85));
-                poolHeight = Math.max(200, availablePoolHeight * 0.90);
+                // Phone mode: bigger pool for larger word boxes
+                const maxPoolWidth = ringWidth * 0.70;
+                poolWidth = Math.max(130, Math.min(maxPoolWidth, availablePoolWidth * 1.1));
+                poolHeight = Math.max(220, availablePoolHeight * 0.95);
             } else {
                 // Desktop/Tablet mode: balanced pool for 4-column grid
                 poolWidth = Math.max(80, availablePoolWidth * 0.95);
@@ -310,25 +312,26 @@ export class UI {
             root.style.setProperty('--pool-height', `${poolHeight}px`);
 
             // ========== FONT SIZES - CONTINUOUS ==========
-            // Slot font: 0.45rem at 36px wide → 1.35rem at 170px wide
-            const slotFontSize = Math.max(0.45, Math.min(1.35, 0.45 + (slotWidth - 36) * 0.9 / 134));
+            // Slot font: increased minimums for better mobile readability
+            const minSlotFontSize = isMobile ? 0.55 : 0.45;
+            const slotFontSize = Math.max(minSlotFontSize, Math.min(1.35, 0.45 + (slotWidth - 36) * 0.9 / 134));
             root.style.setProperty('--slot-font-size', `${slotFontSize}rem`);
 
             // Pool font: scale aggressively with pool width to prevent text wrapping
-            // Pool width is most important for preventing multi-line words
-            const poolWidthFactor = poolWidth / 160; // More sensitive to narrow pools
+            // Increased mobile minimum for better readability
+            const poolWidthFactor = poolWidth / 160;
             const poolHeightFactor = poolHeight / 180;
             const poolFontFactor = Math.min(poolWidthFactor, poolHeightFactor, slotWidth / 80);
-            const minPoolFontSize = isMobile ? 0.65 : 0.4;
+            const minPoolFontSize = isMobile ? 0.75 : 0.4;
             const poolFontSize = Math.max(minPoolFontSize, Math.min(1.1, 0.4 + poolFontFactor * 0.6));
             root.style.setProperty('--pool-font-size', `${poolFontSize}rem`);
 
             // Pool word sizing - scale with pool dimensions
-            // Use smaller multiplier for width to keep words compact when narrow
-            const minPoolWordHeight = isMobile ? 44 : 24;
-            const poolWordHeight = Math.max(minPoolWordHeight, Math.min(65, Math.min(poolHeight * 0.14, poolWidth * 0.095)));
-            const poolWordPadV = Math.max(4, Math.min(14, poolHeight * 0.025));
-            const poolWordPadH = Math.max(2, Math.min(8, poolWidth * 0.012));
+            // Increased mobile minimum heights for better touch and readability
+            const minPoolWordHeight = isMobile ? 52 : 24;
+            const poolWordHeight = Math.max(minPoolWordHeight, Math.min(70, Math.min(poolHeight * 0.16, poolWidth * 0.11)));
+            const poolWordPadV = Math.max(8, Math.min(14, poolHeight * 0.03));
+            const poolWordPadH = Math.max(6, Math.min(10, poolWidth * 0.015));
             root.style.setProperty('--pool-word-height', `${poolWordHeight}px`);
             root.style.setProperty('--pool-word-pad-v', `${poolWordPadV}px`);
             root.style.setProperty('--pool-word-pad-h', `${poolWordPadH}px`);

@@ -77,6 +77,11 @@ body.dragging {
     margin: 0 auto;
     width: 100%;
     padding: 0 var(--safe-margin);
+    /* Safe area insets for notched devices */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: max(var(--safe-margin), env(safe-area-inset-left));
+    padding-right: max(var(--safe-margin), env(safe-area-inset-right));
     position: relative;
     z-index: 1;
 }
@@ -186,23 +191,23 @@ body.dragging {
 }
 
 .direction-arrow.top-right {
-    top: var(--arrow-inset, 15%);
-    right: var(--arrow-inset, 15%);
+    top: var(--arrow-inset-y, 15%);
+    right: var(--arrow-inset-x, 15%);
 }
 
 .direction-arrow.bottom-right {
-    bottom: var(--arrow-inset, 15%);
-    right: var(--arrow-inset, 15%);
+    bottom: var(--arrow-inset-y, 15%);
+    right: var(--arrow-inset-x, 15%);
 }
 
 .direction-arrow.bottom-left {
-    bottom: var(--arrow-inset, 15%);
-    left: var(--arrow-inset, 15%);
+    bottom: var(--arrow-inset-y, 15%);
+    left: var(--arrow-inset-x, 15%);
 }
 
 .direction-arrow.top-left {
-    top: var(--arrow-inset, 15%);
-    left: var(--arrow-inset, 15%);
+    top: var(--arrow-inset-y, 15%);
+    left: var(--arrow-inset-x, 15%);
 }
 
 /* Slots */
@@ -367,6 +372,14 @@ body.dragging {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+}
+
+/* Button text - show full on desktop, short on mobile */
+.btn-short {
+    display: none;
+}
+.btn-full {
+    display: inline;
 }
 
 /* Hint Button */
@@ -1079,27 +1092,32 @@ body.dragging {
 
 /* Phone Mode (3x7 layout) - Mobile portrait orientation */
 @media (max-width: 600px) and (orientation: portrait) {
+    /* Extra top padding for notched devices */
+    .game-header {
+        padding-top: max(16px, env(safe-area-inset-top));
+    }
+
     /* 2x8 pool grid for tall narrow center area */
     .word-pool {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         grid-template-rows: repeat(8, auto);
-        gap: 4px;
+        gap: 6px;
     }
 
-    /* Larger slots for better touch on phone */
+    /* Larger slots for better touch and readability on phone */
     .slot {
         border-radius: 10px;
         letter-spacing: -0.01em;
-        font-size: clamp(0.65rem, var(--slot-font-size, 0.85rem), 1.1rem);
+        font-size: clamp(0.7rem, var(--slot-font-size, 0.9rem), 1.15rem);
     }
 
-    /* Pool words - taller for 2-column layout */
+    /* Pool words - larger text and better spacing */
     .pool-word {
         border-radius: 8px;
-        letter-spacing: -0.01em;
-        padding: 8px 4px;
-        min-height: 38px;
-        font-size: clamp(0.6rem, var(--pool-font-size, 0.75rem), 0.9rem);
+        letter-spacing: 0;
+        padding: 10px 6px;
+        min-height: 42px;
+        font-size: clamp(0.7rem, var(--pool-font-size, 0.85rem), 1rem);
     }
 
     /* Ensure pool container fits in narrow center */
@@ -1107,20 +1125,35 @@ body.dragging {
         max-width: calc(var(--pool-width));
     }
 
-    /* Compact button row for phone */
+    /* Compact side-by-side buttons on phone */
     .button-row {
-        gap: 4px;
-        margin-top: 4px;
+        gap: 8px;
+        margin-top: 6px;
         flex-wrap: nowrap;
-        flex-direction: column;
+        flex-direction: row;
     }
 
     .submit-btn, .hint-btn {
-        padding: 8px 16px;
-        font-size: 0.7rem;
-        min-height: 36px;
-        width: 100%;
+        padding: 6px 12px;
+        font-size: 0.6rem;
+        min-height: 30px;
+        width: auto;
     }
+
+    /* Show short text on mobile */
+    .btn-short {
+        display: inline;
+    }
+    .btn-full {
+        display: none;
+    }
+
+    /* Slightly smaller arrows on phone */
+    .direction-arrow {
+        width: 16px;
+        height: 16px;
+    }
+
 
     /* Hide pool message on phone */
     .pool-message {
@@ -1132,23 +1165,24 @@ body.dragging {
 @media (max-width: 380px) and (orientation: portrait) {
     .word-pool {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 3px;
+        gap: 4px;
     }
 
     .pool-word {
-        padding: 6px 3px;
-        font-size: clamp(0.55rem, var(--pool-font-size, 0.7rem), 0.85rem);
-        min-height: 34px;
+        padding: 8px 4px;
+        font-size: clamp(0.6rem, var(--pool-font-size, 0.75rem), 0.9rem);
+        min-height: 38px;
     }
 
     .slot {
         letter-spacing: -0.02em;
+        font-size: clamp(0.65rem, var(--slot-font-size, 0.8rem), 1rem);
     }
 
     .submit-btn, .hint-btn {
-        padding: 6px 12px;
-        font-size: 0.65rem;
-        min-height: 32px;
+        padding: 8px 10px;
+        font-size: 0.7rem;
+        min-height: 36px;
     }
 }
 

@@ -1,4 +1,4 @@
-import { dailyPuzzle } from './data.js?v=18';
+import { dailyPuzzle } from './data.js?v=28';
 import { WORD_COUNT } from './config.js';
 
 export class Game {
