@@ -1166,10 +1166,10 @@ body.dragging {
 
     .button-row .hint-btn,
     .button-row .submit-btn {
-        padding: 0 12px;
+        padding: 0 10px;
         font-size: 0.75rem;
-        height: 40px;
-        /* Standardized taller height for both */
+        height: 34px;
+        /* Reduced from 40px for more vertical space */
         width: calc((var(--pool-width) - 24px) / 2);
         flex: none;
         border: 1.5px solid var(--accent-primary);
